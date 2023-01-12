@@ -1,6 +1,6 @@
 ---
 title: "MATH1115: Project 1"
-author: "Student/s SID"
+author: "510415022"
 subtitle: "Project X"
 date: "University of Sydney | Unit of Study | MONTH YEAR"
 # You can change the title, subtitle, author etc.
