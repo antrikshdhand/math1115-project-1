@@ -1,0 +1,208 @@
+---
+title: "MATH1115: Project 1"
+author: "Student/s SID"
+subtitle: "Project X"
+date: "University of Sydney | Unit of Study | MONTH YEAR"
+# You can change the title, subtitle, author etc.
+# if you do not want a subtitle, author, or date just delete or comment # the the line!
+output:
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: flatly
+    # Other themes can be found at: https://bootswatch.com/
+    css: 
+      - https://use.fontawesome.com/releases/v5.0.6/css/all.css
+    #This will allow you to insert icons in your document, thanks to [Font Awesome](http://fontawesome.io).
+    #You will find an examples below.
+    # If you are knitting your document but not connected to the internet, place a "#" in front of the css line above with the font-awesome.min.css line to comment it out. This will let you knit the document in draft form until you connect again and knit the final. Note that when you do this some elements will be missing from the knitted slides. 
+    toc: true
+    #This adds a Table of Contents (toc).
+    toc_depth: 3
+    #This controls the number of subheadings included in the toc.
+    toc_float: true
+    #This allows toc to update relative to your location as you scroll down the html page.
+    code_folding: hide
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
+    
+    # More information: http://rmarkdown.rstudio.com/html_document_format.html
+---
+
+<br>
+
+# Executive Summary
+- The aim of this report is to ...
+- The main discoveries are ...
+
+<br>
+
+# Full Report
+
+## Initial Data Analysis (IDA)
+
+RStudio has many data sets already loaded in. The example below uses preloaded data direct from RStudio example dataset: mtcars.Y9ou will need to load your own data in, using the instructions in the RGuide.
+
+
+```{r}
+# Quick look at top 5 rows of data
+head(mtcars)
+
+## Size of data
+dim(mtcars)
+
+## R's classification of data
+class(mtcars)
+
+## R's classification of variables
+str(mtcars)
+sapply(mtcars, class)
+```
+
+Summary:
+
+- The data cames from ...
+- The data is/is not valid because ...
+- Possible issues include ...
+- Each row represents ...
+- Each column represents ...
+
+<br>
+
+## Research Question 1
+
+Insert text and analysis. 
+
+Summary: 
+
+## Research Question 2
+
+Insert text and analysis. 
+
+Summary: 
+
+## Research Question 3
+
+Insert text and analysis. 
+
+Summary: 
+
+<br>
+
+# References
+
+Style: APA 
+
+<br>
+
+
+# Beyond the Basics - extending your abilities with RMarkdown
+This quick reference guide will cover some basic RMarkdown for use in your projects. 
+
+<br>
+
+## Lists
+
+Here is a basic list:
+
+- To do 1
+
+- To do 2
+
+- To do 3
+
+<br>
+
+## Links
+
+Here is a link to interesting web page:
+
+[Interesting Web Page](https://www.ted.com/topics/visualizations)
+
+<br>
+
+
+## Tables
+
+Here is a simple table.
+
+| Tables        | Are           | Cool  |
+|---------------|:-------------:|------:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+<br> 
+
+## Images
+
+Here is am image. It has not been adjusted in the rmd file, so represents the true size of the original image. This image is sourced directly from an online url. 
+
+To learn more about adding images directly from your own computer, see the comments in this rmd file. 
+
+![](https://petcube.com/blog/content/images/2017/08/kitten-supplies-cover.jpg)
+
+<!-- Begin comment
+
+Use the line below if you are sourcing an image from your own computer. For this line to run correctly, you would need to have an image called 'kitten.jpg' in a folder called 'figure' which is in the same folder as this rmd file.
+
+![](figure/kitten.jpg)
+
+-----------------------------
+**Making image adjustments**
+With some changes to the rmarkdown in the rmd file, you can also to reduce the image size by, say, 50% and make it left aligned:
+<div align="left">
+<img src="figure/kitten.jpg" width="50%" height="50%">
+</div>
+-----------------------------
+
+Give it a try! Find a picture of a kitten online, save it to your computer as described above and see what happens. 
+
+end comment --->
+
+<br>
+Image source: https://petcube.com/blog/10-all-important-kitten-supplies-infographic/
+
+<br>
+
+## Videos
+
+Below you will find a video embedded into your RMarkdown file. 
+Change the YouTube link in the rmd file to get a different video.
+
+<div style="max-width:640"><div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/a6KGPBflhiM" width="560" height="315" style="position:absolute;left:0;top:0;width:100%;height:100%" frameborder="0" scrolling="no" allowfullscreen></iframe></div></div>
+
+<br>
+
+## LaTeX
+
+You can even use LaTeX in an RMarkdown document!
+
+For example, how could you work out $\sum_{i=1}^{5} x_{i}^3$?
+
+<br>
+
+## R Code
+
+Here is an R code chunk:
+
+Try the following commands in R.
+```{r,eval=F}
+1+ exp(3) + sin(0.5)
+x=c(1,2,3)
+x^2
+sum(x)
+```
+
+Here is some in-line code `in-line code`. You can put any R code here for display, e.g. `sum(x)`
+
+<br>
+
+# RMarkdown Resources
+Check out the resources below for more information on RMarkdown. 
+
+ <i class="fa fa-link"></i>[How to use R Markdown](https://www.oreilly.com/learning/easy-reproducible-reports-with-r?utm_medium=social&utm_source=twitter.com&utm_campaign=lgen&utm_content=data+webcast+ki&cmp=tw-data-na-article-lgen_tw_webcast_ki)
+ 
+<i class="fa fa-link"></i>[Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
+
+<br>
