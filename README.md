@@ -4,9 +4,10 @@
 Group members:
 
 ```
-| Team member    | Email                      | SID       |
-|----------------|----------------------------|-----------|
-| Alex Marlin    | amar0358@uni.sydney.edu.au | 500459111 |
-| Antriksh Dhand | adha5655@uni.sydney.edu.au | 510415022 |
-| Boris Betzis   | bbet0254@uni.sydney.edu.au | 500463613 |
+| Team member     | Email                      | SID       |
+|-----------------|----------------------------|-----------|
+| Alex Marlin     | amar0358@uni.sydney.edu.au | 500459111 |
+| Antriksh Dhand  | adha5655@uni.sydney.edu.au | 510415022 |
+| Boris Betzis    | bbet0254@uni.sydney.edu.au | 500463613 |
+| Vishesh Vasnani | vvas2805@uni.sydney.edu.au | 500545399 |
 ```
