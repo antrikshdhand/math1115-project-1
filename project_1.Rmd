@@ -1,8 +1,8 @@
 ---
 title: "MATH1115: Project 1"
-author: "510415022"
-subtitle: "Project X"
-date: "University of Sydney | Unit of Study | MONTH YEAR"
+author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
+subtitle: "An Investigation of Kiva Crowdfunding data"
+date: "University of Sydney | MATH1115 | JAN 2023"
 # You can change the title, subtitle, author etc.
 # if you do not want a subtitle, author, or date just delete or comment # the the line!
 output:
@@ -41,36 +41,24 @@ output:
 
 ## Initial Data Analysis (IDA)
 
-RStudio has many data sets already loaded in. The example below uses preloaded data direct from RStudio example dataset: mtcars.Y9ou will need to load your own data in, using the instructions in the RGuide.
+# Initial Data Analysis (IDA)
+
+ - Origin of data reviewed and critically assessed incl reliability and limitations
+  - Kiva Data (~ 100 words)
+  - World Data (~50)
+ - Data wrangling necessary and rational (~75)
+ - Potential interested stakeholders (~75)
+
+```{r, message = 'FALSE'}
+loan_data <- read.csv("data/kiva_loans.csv")
+library(tidyverse)
+library(tmap)
+library(countrycode)
+```
 
 The GDP data set used in research question one is from the World Bank, it currently contains global annual GDP data for 266 countries from as early as 1960 (depending on the country) to 2021. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The onyl limitation is some of the country names don't exactyl match the ones in the kiva dataset. 
 
 https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
-
-```{r}
-# Quick look at top 5 rows of data
-head(mtcars)
-
-## Size of data
-dim(mtcars)
-
-## R's classification of data
-class(mtcars)
-
-## R's classification of variables
-str(mtcars)
-sapply(mtcars, class)
-```
-
-Summary:
-
-- The data cames from ...
-- The data is/is not valid because ...
-- Possible issues include ...
-- Each row represents ...
-- Each column represents ...
-
-<br>
 
 ## Research Question 1
 ##Is there are correlation between a Country's GDP and its total loan Sum?
@@ -110,9 +98,37 @@ The GDP data in the scatter plot above is made up of GDP data from 2015. This wa
 
 ## Research Question 2
 
-Insert text and analysis. 
+What is the distribution of funding between the Kiva designated sectors?
 
-Summary: 
+```{r}
+loan_data %>%
+  group_by(sector) %>%
+  summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
+  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col() +  # Represents the data as a side by side bar chart with colour
+  labs(x = "Sector", y = "Total Funding (Million USD)", title = 'Total Kiva funding per Sector') +
+  theme_classic() + #Classic theme just an example or an idea of what can be done and how
+  geom_text(aes(label = total_funding), vjust = -0.5, size = 2) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=0.4))
+```
+
+Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors receive double the amount of funding as the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
+
+```{r}
+library(gt)
+loan_data %>%
+  filter(sector == 'Food') %>%
+  select(use) %>%
+  slice(1:10) %>% 
+  gt()
+
+```
+
+
+The conclusions drawn from research Q1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
+
+This will need to be formatted properly 
+
+Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
 
 ## Research Question 3
 
@@ -122,6 +138,8 @@ Summary:
 
 <br>
 
+## Research Question 4
+
 # References
 
 Style: APA 
@@ -129,115 +147,32 @@ Style: APA
 <br>
 
 
-# Beyond the Basics - extending your abilities with RMarkdown
-This quick reference guide will cover some basic RMarkdown for use in your projects. 
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+library(tidyverse) # loads the tidyverse package 
+library(janitor) # loads the janitor package 
+library(plotly) # loads the plotly package 
 
-<br>
+kiva_loans <- read_csv("data/kiva_loans.csv") # reads the file "kiva_loans.csv" and assigns it as "kiva_loans"
+world_gdp <- read_csv("data/world_gdp.csv") # reads the file "world_gdp.csv" and assigns it as "world_gdp"
 
-## Lists
+kiva_loans <- kiva_loans %>%
+  rename(Country = "country") %>% # renames country
+  group_by(Country) %>% # aggregates by country
+  summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
 
-Here is a basic list:
+world_gdp <- world_gdp %>% 
+  rename(Country = "Country Name") %>% # renames country
+  group_by(Country) %>% # aggregates by country
+  rename(Country_GDP = "2015") %>% # renames country
+  summarise(Country_GDP) # creates a new data frame
 
-- To do 1
+kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = F, all.y = F) # merges the two data frames
+kiva_loans_world_gdp <- kiva_loans_world_gdp %>% 
+  rename(Country_Loan_Sum = "sum(loan_amount)") # renames sum(loan_amount) to Country_Loan_Sum for clarity in the interative graph
 
-- To do 2
-
-- To do 3
-
-<br>
-
-## Links
-
-Here is a link to interesting web page:
-
-[Interesting Web Page](https://www.ted.com/topics/visualizations)
-
-<br>
-
-
-## Tables
-
-Here is a simple table.
-
-| Tables        | Are           | Cool  |
-|---------------|:-------------:|------:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-<br> 
-
-## Images
-
-Here is am image. It has not been adjusted in the rmd file, so represents the true size of the original image. This image is sourced directly from an online url. 
-
-To learn more about adding images directly from your own computer, see the comments in this rmd file. 
-
-![](https://petcube.com/blog/content/images/2017/08/kitten-supplies-cover.jpg)
-
-<!-- Begin comment
-
-Use the line below if you are sourcing an image from your own computer. For this line to run correctly, you would need to have an image called 'kitten.jpg' in a folder called 'figure' which is in the same folder as this rmd file.
-
-![](figure/kitten.jpg)
-
------------------------------
-**Making image adjustments**
-With some changes to the rmarkdown in the rmd file, you can also to reduce the image size by, say, 50% and make it left aligned:
-<div align="left">
-<img src="figure/kitten.jpg" width="50%" height="50%">
-</div>
------------------------------
-
-Give it a try! Find a picture of a kitten online, save it to your computer as described above and see what happens. 
-
-end comment --->
-
-<br>
-Image source: https://petcube.com/blog/10-all-important-kitten-supplies-infographic/
-
-<br>
-
-## Videos
-
-Below you will find a video embedded into your RMarkdown file. 
-Change the YouTube link in the rmd file to get a different video.
-
-<div style="max-width:640"><div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/a6KGPBflhiM" width="560" height="315" style="position:absolute;left:0;top:0;width:100%;height:100%" frameborder="0" scrolling="no" allowfullscreen></iframe></div></div>
-
-<br>
-
-## LaTeX
-
-You can even use LaTeX in an RMarkdown document!
-
-For example, how could you work out $\sum_{i=1}^{5} x_{i}^3$?
-
-<br>
-
-## R Code
-
-Here is an R code chunk:
-
-Try the following commands in R.
-```{r,eval=F}
-1+ exp(3) + sin(0.5)
-x=c(1,2,3)
-x^2
-sum(x)
+plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `Country_GDP`, y = `Country_Loan_Sum`, Country = `Country`)) +
+  geom_point(colour  = "purple") + 
+  labs(x = "Country's GDP", y = "Sum of Loans per Country", title = "Sum of Kiva loans per country against the country's GDP")
+ggplotly(plot_kiva_loans_world_gdp)
 ```
 
-Here is some in-line code `in-line code`. You can put any R code here for display, e.g. `sum(x)`
-
-<br>
-
-# RMarkdown Resources
-Check out the resources below for more information on RMarkdown. 
-
- <i class="fa fa-link"></i>[How to use R Markdown](https://www.oreilly.com/learning/easy-reproducible-reports-with-r?utm_medium=social&utm_source=twitter.com&utm_campaign=lgen&utm_content=data+webcast+ki&cmp=tw-data-na-article-lgen_tw_webcast_ki)
- 
-<i class="fa fa-link"></i>[Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-
-<br>
-
-<br>
