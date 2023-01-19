@@ -85,6 +85,7 @@ plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `GDP`, y = `Lo
   labs(x = "GDP (USD)", y = "Sum of Loans (USD)", title = "Exponetial Scatter plot for the Sum of Kiva loans against the GDP for each Country")
 ggplotly(plot_kiva_loans_world_gdp)
 ```
+
 The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
 
 ## Research Question 2
