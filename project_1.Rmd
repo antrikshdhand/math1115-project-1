@@ -43,6 +43,9 @@ output:
 
 RStudio has many data sets already loaded in. The example below uses preloaded data direct from RStudio example dataset: mtcars.Y9ou will need to load your own data in, using the instructions in the RGuide.
 
+The GDP data set used in research question one is from the World Bank, it currently contains global annual GDP data for 266 countries from as early as 1960 (depending on the country) to 2021. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The onyl limitation is some of the country names don't exactyl match the ones in the kiva dataset. 
+
+https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
 
 ```{r}
 # Quick look at top 5 rows of data
@@ -70,8 +73,9 @@ Summary:
 <br>
 
 ## Research Question 1
+##Is there are correlation between a Country's GDP and its total loan Sum?
 
-Insert text and analysis. 
+To Answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan Sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
 ```{r, warning = FALSE, message = FALSE}
 library(tidyverse) # loads the tidyverse package 
 library(janitor) # loads the janitor package 
@@ -87,21 +91,22 @@ kiva_loans <- kiva_loans %>%
 
 world_gdp <- world_gdp %>% 
   rename(Country = "Country Name") %>% # renames country
+   mutate(Country = recode(Country, `Congo, Rep.` = "Congo", `Congo, Dem. Rep.` = "The Democratic Republic of the Congo", `Cote d'Ivoire` = "Cote D'Ivoire", `Egypt, Arab Rep.` = "Egypt", `Kyrgyz Republic` = "Kyrgyzstan", `Lao PDR` = "Lao People's Democratic Republic", `Myanmar` = "Myanmar (Burma)", `West Bank and Gaza` = "Palestine", `St. Vincent and the Grenadines` = "Saint Vincent and the Grenadines", `Turks and Caicos Islands` = "Turkey", `Virgin Islands (U.S.)` = "Virgin Islands", `Yemen, Rep.` = "Yemen")) %>% # renames country names that differ from the kiva data set
   group_by(Country) %>% # aggregates by country
-  rename(Country_GDP = "2015") %>% # renames country
+  rename(Country_GDP = "2015") %>% # renames country GDP
   summarise(Country_GDP) # creates a new data frame
 
-kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = F, all.y = F) # merges the two data frames
-colnames(kiva_loans_world_gdp) <- c("Country", "Country Loan Sum", "Country GDP")
+kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = T, all.y = F) # merges the two data frames
+colnames(kiva_loans_world_gdp) <- c("Country", "Loan Sum", "GDP") # renames the columns
 
-plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `Country GDP`, y = `Country Loan Sum`, Country = `Country`)) +
-  geom_point(colour  = "purple") + 
+plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `GDP`, y = `Loan Sum`, Country = `Country`)) +
+  geom_point(colour  = "darkgreen") + 
   scale_x_continuous(trans = 'log10') +
   scale_y_continuous(trans = 'log10') +
-  labs(x = "Country's GDP", y = "Sum of Loans per Country", title = "Sum of Kiva loans per country against the country's GDP")
+  labs(x = "GDP (USD)", y = "Sum of Loans (USD)", title = "Exponetial Scatter plot for the Sum of Kiva loans against the GDP for each Country")
 ggplotly(plot_kiva_loans_world_gdp)
 ```
-Summary: 
+The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
 
 ## Research Question 2
 
