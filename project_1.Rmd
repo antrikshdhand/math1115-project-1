@@ -82,7 +82,7 @@ library(janitor) # loads the janitor package
 library(plotly) # loads the plotly package 
 
 kiva_loans <- read_csv("data/kiva_loans.csv") # reads the file "kiva_loans.csv" and assigns it as "kiva_loans"
-world_gdp <- read_csv("data/world_gdp.csv") # reads the file "world_gdp.csv" and assigns it as "world_gdp"
+world_gdp <- read_csv("data/world_gdp.csv", skip = 4) # reads the file "world_gdp.csv" and assigns it as "world_gdp"
 
 kiva_loans <- kiva_loans %>%
   rename(Country = "country") %>% # renames country
