@@ -34,6 +34,7 @@ Clear, interesting summary of the main insights from the report. [Max 100 words]
 library(tidyverse)
 library(janitor)
 library(plotly)
+kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
 ```
 
 ## Initial Data Analysis (IDA)
@@ -44,13 +45,6 @@ library(plotly)
  - Data wrangling necessary and rational (~75)
  - Potential interested stakeholders (~75)
 
-```{r, message = 'FALSE'}
-loan_data <- read.csv("data/kiva_loans.csv")
-library(tidyverse)
-library(tmap)
-library(countrycode)
-```
-
 The GDP data set used in research question one is from the World Bank, it currently contains global annual GDP data for 266 countries from as early as 1960 (depending on the country) to 2021. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The onyl limitation is some of the country names don't exactyl match the ones in the kiva dataset. 
 
 https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
@@ -60,7 +54,6 @@ https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImrid
 To answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
 
 ```{r, warning = FALSE, message = FALSE}
-kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
 world_gdp <- read_csv("data/world_gdp.csv") # read in GDP data 
 kiva_loans_country <- kiva_loans %>%
   rename(Country = "country") %>% 
@@ -89,9 +82,36 @@ The GDP data in the scatter plot above is made up of GDP data from 2015. This wa
 
 ## Research Question 2
 
-Insert text and analysis. 
+What is the distribution of funding between the Kiva designated sectors?
 
-Summary: 
+```{r}
+loan_data %>%
+  group_by(sector) %>%
+  summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
+  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col() +  # Represents the data as a side by side bar chart with colour
+  labs(x = "Sector", y = "Total Funding (Million USD)", title = 'Total Kiva funding per Sector') +
+  theme_classic() + #Classic theme just an example or an idea of what can be done and how
+  geom_text(aes(label = total_funding), vjust = -0.5, size = 2) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=0.4))
+```
+
+Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors receive double the amount of funding as the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
+
+```{r}
+library(gt)
+loan_data %>%
+  filter(sector == 'Food') %>%
+  select(use) %>%
+  slice(1:10) %>% 
+  gt()
+
+```
+
+The conclusions drawn from research Q1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
+
+This will need to be formatted properly 
+
+Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
 
 ## IQ 3: A deeper look into the agriculture sector
 
@@ -134,54 +154,6 @@ agriculture_by_region <- kiva_countries %>%
 ```
 
 <br>
-
-# References
-
-Style: APA 
-
-<br>
-
-What is the distribution of funding between the Kiva designated sectors?
-
-```{r}
-loan_data %>%
-  group_by(sector) %>%
-  summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
-  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col() +  # Represents the data as a side by side bar chart with colour
-  labs(x = "Sector", y = "Total Funding (Million USD)", title = 'Total Kiva funding per Sector') +
-  theme_classic() + #Classic theme just an example or an idea of what can be done and how
-  geom_text(aes(label = total_funding), vjust = -0.5, size = 2) +
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=0.4))
-```
-
-Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors receive double the amount of funding as the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
-
-```{r}
-library(gt)
-loan_data %>%
-  filter(sector == 'Food') %>%
-  select(use) %>%
-  slice(1:10) %>% 
-  gt()
-
-```
-
-
-The conclusions drawn from research Q1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
-
-This will need to be formatted properly 
-
-Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
-
-## Research Question 3
-
-Insert text and analysis. 
-
-Summary: 
-
-<br>
-
-## Research Question 4
 
 # References
 
