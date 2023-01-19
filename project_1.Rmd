@@ -72,7 +72,35 @@ Summary:
 ## Research Question 1
 
 Insert text and analysis. 
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse) # loads the tidyverse package 
+library(janitor) # loads the janitor package 
+library(plotly) # loads the plotly package 
 
+kiva_loans <- read_csv("data/kiva_loans.csv") # reads the file "kiva_loans.csv" and assigns it as "kiva_loans"
+world_gdp <- read_csv("data/world_gdp.csv") # reads the file "world_gdp.csv" and assigns it as "world_gdp"
+
+kiva_loans <- kiva_loans %>%
+  rename(Country = "country") %>% # renames country
+  group_by(Country) %>% # aggregates by country
+  summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
+
+world_gdp <- world_gdp %>% 
+  rename(Country = "Country Name") %>% # renames country
+  group_by(Country) %>% # aggregates by country
+  rename(Country_GDP = "2015") %>% # renames country
+  summarise(Country_GDP) # creates a new data frame
+
+kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = F, all.y = F) # merges the two data frames
+colnames(kiva_loans_world_gdp) <- c("Country", "Country Loan Sum", "Country GDP")
+
+plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `Country GDP`, y = `Country Loan Sum`, Country = `Country`)) +
+  geom_point(colour  = "purple") + 
+  scale_x_continuous(trans = 'log10') +
+  scale_y_continuous(trans = 'log10') +
+  labs(x = "Country's GDP", y = "Sum of Loans per Country", title = "Sum of Kiva loans per country against the country's GDP")
+ggplotly(plot_kiva_loans_world_gdp)
+```
 Summary: 
 
 ## Research Question 2
@@ -208,35 +236,3 @@ Check out the resources below for more information on RMarkdown.
 <br>
 
 <br>
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-library(tidyverse) # loads the tidyverse package 
-library(janitor) # loads the janitor package 
-library(plotly) # loads the plotly package 
-
-kiva_loans <- read_csv("data/kiva_loans.csv") # reads the file "kiva_loans.csv" and assigns it as "kiva_loans"
-world_gdp <- read_csv("data/world_gdp.csv") # reads the file "world_gdp.csv" and assigns it as "world_gdp"
-
-kiva_loans <- kiva_loans %>%
-  rename(Country = "country") %>% # renames country
-  group_by(Country) %>% # aggregates by country
-  summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
-
-world_gdp <- world_gdp %>% 
-  rename(Country = "Country Name") %>% # renames country
-  group_by(Country) %>% # aggregates by country
-  rename(Country_GDP = "2015") %>% # renames country
-  summarise(Country_GDP) # creates a new data frame
-
-kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = F, all.y = F) # merges the two data frames
-colnames(kiva_loans_world_gdp) <- c("Country", "Country Loan Sum", "Country GDP")
-
-plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `Country GDP`, y = `Country Loan Sum`, Country = `Country`)) +
-  geom_point(colour  = "purple") + 
-  scale_x_continuous(trans = 'log10') +
-  scale_y_continuous(trans = 'log10') +
-  labs(x = "Country's GDP", y = "Sum of Loans per Country", title = "Sum of Kiva loans per country against the country's GDP")
-ggplotly(plot_kiva_loans_world_gdp)
-```
-
-```
