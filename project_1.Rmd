@@ -1,10 +1,10 @@
 ---
-title: "MATH1115: Project 1"
-author: "510415022"
-subtitle: "Project X"
-date: "University of Sydney | Unit of Study | MONTH YEAR"
-# You can change the title, subtitle, author etc.
-# if you do not want a subtitle, author, or date just delete or comment # the the line!
+title: "An investigation into the spread of Kiva loans around the world"
+author: "SIDs: 510415022, 500459111, 500463613 and 500545399"
+subtitle: "For MATH1115: Project 1"
+date: "University of Sydney | January 2022"
+bibliography: references.bib
+
 output:
   html_document:
     fig_caption: yes
@@ -15,52 +15,36 @@ output:
     css: 
       - https://use.fontawesome.com/releases/v5.0.6/css/all.css
     #This will allow you to insert icons in your document, thanks to [Font Awesome](http://fontawesome.io).
-    #You will find an examples below.
-    # If you are knitting your document but not connected to the internet, place a "#" in front of the css line above with the font-awesome.min.css line to comment it out. This will let you knit the document in draft form until you connect again and knit the final. Note that when you do this some elements will be missing from the knitted slides. 
     toc: true
-    #This adds a Table of Contents (toc).
     toc_depth: 3
-    #This controls the number of subheadings included in the toc.
     toc_float: true
-    #This allows toc to update relative to your location as you scroll down the html page.
     code_folding: hide
-    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
-    
-    # More information: http://rmarkdown.rstudio.com/html_document_format.html
 ---
 
 <br>
 
 # Executive Summary
-- The aim of this report is to ...
-- The main discoveries are ...
+
+Clear, interesting summary of the main insights from the report. [Max 100 words].
 
 <br>
 
 # Full Report
 
+```{r}
+library(tidyverse)
+library(janitor)
+library(plotly)
+```
+
+
 ## Initial Data Analysis (IDA)
 
-RStudio has many data sets already loaded in. The example below uses preloaded data direct from RStudio example dataset: mtcars.Y9ou will need to load your own data in, using the instructions in the RGuide.
+Origin of data cited and critically assessed, including reliability and limitations. Any necessary data wrangling has occurred for the research questions undertook, with a brief rationale. Propose potential interested stakeholders of your research questions and project. [Max 300 words]
 
 The GDP data set used in research question one is from the World Bank, it currently contains global annual GDP data for 266 countries from as early as 1960 (depending on the country) to 2021. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The onyl limitation is some of the country names don't exactyl match the ones in the kiva dataset. 
 
 https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
-
-```{r}
-# Quick look at top 5 rows of data
-head(mtcars)
-
-## Size of data
-dim(mtcars)
-
-## R's classification of data
-class(mtcars)
-
-## R's classification of variables
-str(mtcars)
-sapply(mtcars, class)
-```
 
 Summary:
 
@@ -72,20 +56,15 @@ Summary:
 
 <br>
 
-## Research Question 1
-##Is there are correlation between a Country's GDP and its total loan Sum?
+## IQ 1: Is there a correlation between a country's GDP and the total sum of Kiva loans?
 
-To Answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan Sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
+To answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
+
 ```{r, warning = FALSE, message = FALSE}
-library(tidyverse) # loads the tidyverse package 
-library(janitor) # loads the janitor package 
-library(plotly) # loads the plotly package 
-
-kiva_loans <- read_csv("data/kiva_loans.csv") # reads the file "kiva_loans.csv" and assigns it as "kiva_loans"
-world_gdp <- read_csv("data/world_gdp.csv") # reads the file "world_gdp.csv" and assigns it as "world_gdp"
-
-kiva_loans <- kiva_loans %>%
-  rename(Country = "country") %>% # renames country
+kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
+world_gdp <- read_csv("data/world_gdp.csv") # read in GDP data 
+kiva_loans_country <- kiva_loans %>%
+  rename(Country = "country") %>% 
   group_by(Country) %>% # aggregates by country
   summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
 
@@ -96,7 +75,7 @@ world_gdp <- world_gdp %>%
   rename(Country_GDP = "2015") %>% # renames country GDP
   summarise(Country_GDP) # creates a new data frame
 
-kiva_loans_world_gdp <- merge(kiva_loans, world_gdp, all.x = T, all.y = F) # merges the two data frames
+kiva_loans_world_gdp <- merge(kiva_loans_country, world_gdp, all.x = T, all.y = F) # merges the two data frames
 colnames(kiva_loans_world_gdp) <- c("Country", "Loan Sum", "GDP") # renames the columns
 
 plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `GDP`, y = `Loan Sum`, Country = `Country`)) +
@@ -114,130 +93,51 @@ Insert text and analysis.
 
 Summary: 
 
-## Research Question 3
+## IQ 3: A deeper look into the agriculture sector
 
-Insert text and analysis. 
+As most Kiva funding went towards agriculture-related activities (as found by IQ 2), it may be interesting to explore this sector further.
 
-Summary: 
+```{r}
+# filtering all agriculture-related Kiva loans 
+agriculture_loans <- kiva_loans[kiva_loans["sector"] == "Agriculture", ]
+head(agriculture_loans)
+```
+
+Let's explore where most of these agriculture-related loans are going.
+
+```{r}
+# Creating our own 'Countries' dataset from two other datasets
+countries <- read_csv("data/countries.csv")
+countries_clean <- countries %>%
+  clean_names() %>%
+  subset(select = c("country", "region", "population", "pop_density_per_sq_mi", 
+                    "infant_mortality_per_1000_births", "gdp_per_capita", "literacy_percent",
+                    "phones_per_1000", "arable_percent", "crops_percent"))
+iso_codes <- read_csv("data/iso_codes.csv") %>%
+  rename(name = `English short name lower case`) %>%
+  rename(country_code = `Alpha-2 code`) %>%
+  subset(select = c("name", "country_code")) # only need the 3-digit code
+
+iso_countries <- merge(countries_clean, iso_codes, by.x = "country", by.y = "name")
+head(iso_countries)
+```
+
+```{r}
+# Merging with agriculture loans
+kiva_countries <- merge(agriculture_loans, iso_countries, by.x = "country_code", by.y = "country_code")
+
+# Grouping agriculture loans by region
+agriculture_by_region <- kiva_countries %>% 
+  group_by(region.y) %>%
+  summarise(sum(loan_amount))
+
+
+```
 
 <br>
 
 # References
 
 Style: APA 
-
-<br>
-
-
-# Beyond the Basics - extending your abilities with RMarkdown
-This quick reference guide will cover some basic RMarkdown for use in your projects. 
-
-<br>
-
-## Lists
-
-Here is a basic list:
-
-- To do 1
-
-- To do 2
-
-- To do 3
-
-<br>
-
-## Links
-
-Here is a link to interesting web page:
-
-[Interesting Web Page](https://www.ted.com/topics/visualizations)
-
-<br>
-
-
-## Tables
-
-Here is a simple table.
-
-| Tables        | Are           | Cool  |
-|---------------|:-------------:|------:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-<br> 
-
-## Images
-
-Here is am image. It has not been adjusted in the rmd file, so represents the true size of the original image. This image is sourced directly from an online url. 
-
-To learn more about adding images directly from your own computer, see the comments in this rmd file. 
-
-![](https://petcube.com/blog/content/images/2017/08/kitten-supplies-cover.jpg)
-
-<!-- Begin comment
-
-Use the line below if you are sourcing an image from your own computer. For this line to run correctly, you would need to have an image called 'kitten.jpg' in a folder called 'figure' which is in the same folder as this rmd file.
-
-![](figure/kitten.jpg)
-
------------------------------
-**Making image adjustments**
-With some changes to the rmarkdown in the rmd file, you can also to reduce the image size by, say, 50% and make it left aligned:
-<div align="left">
-<img src="figure/kitten.jpg" width="50%" height="50%">
-</div>
------------------------------
-
-Give it a try! Find a picture of a kitten online, save it to your computer as described above and see what happens. 
-
-end comment --->
-
-<br>
-Image source: https://petcube.com/blog/10-all-important-kitten-supplies-infographic/
-
-<br>
-
-## Videos
-
-Below you will find a video embedded into your RMarkdown file. 
-Change the YouTube link in the rmd file to get a different video.
-
-<div style="max-width:640"><div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/a6KGPBflhiM" width="560" height="315" style="position:absolute;left:0;top:0;width:100%;height:100%" frameborder="0" scrolling="no" allowfullscreen></iframe></div></div>
-
-<br>
-
-## LaTeX
-
-You can even use LaTeX in an RMarkdown document!
-
-For example, how could you work out $\sum_{i=1}^{5} x_{i}^3$?
-
-<br>
-
-## R Code
-
-Here is an R code chunk:
-
-Try the following commands in R.
-```{r,eval=F}
-1+ exp(3) + sin(0.5)
-x=c(1,2,3)
-x^2
-sum(x)
-```
-
-Here is some in-line code `in-line code`. You can put any R code here for display, e.g. `sum(x)`
-
-<br>
-
-# RMarkdown Resources
-Check out the resources below for more information on RMarkdown. 
-
- <i class="fa fa-link"></i>[How to use R Markdown](https://www.oreilly.com/learning/easy-reproducible-reports-with-r?utm_medium=social&utm_source=twitter.com&utm_campaign=lgen&utm_content=data+webcast+ki&cmp=tw-data-na-article-lgen_tw_webcast_ki)
- 
-<i class="fa fa-link"></i>[Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-
-<br>
 
 <br>
