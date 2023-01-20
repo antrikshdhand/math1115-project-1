@@ -34,7 +34,6 @@ Clear, interesting summary of the main insights from the report. [Max 100 words]
 library(tidyverse)
 library(janitor)
 library(plotly)
-kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
 ```
 
 ## Initial Data Analysis (IDA)
@@ -49,7 +48,40 @@ The GDP data set used in research question one is from the World Bank, it curren
 
 https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
 
-## IQ 1: Is there a correlation between a country's GDP and the total sum of Kiva loans?
+## Data setup
+
+```{r}
+kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
+```
+
+Let's create our own country dataset.
+
+Sources: 
+- https://www.kaggle.com/datasets/juanumusic/countries-iso-codes
+- https://ourworldindata.org/grapher/gross-domestic-product 
+
+NEED TO ELABORATE ON THESE SOURCES...
+
+```{r}
+# Creating our own 'Countries' dataset from two other datasets
+countries <- read_csv("data/countries.csv")
+countries_clean <- countries %>%
+  clean_names() %>%
+  subset(select = c("country", "region", "population", "pop_density_per_sq_mi", 
+                    "infant_mortality_per_1000_births", "gdp_per_capita", "literacy_percent",
+                    "phones_per_1000", "arable_percent", "crops_percent"))
+
+iso_codes <- read_csv("data/iso_codes.csv") %>%
+  rename(name = `English short name lower case`) %>%
+  rename(country_code = `Alpha-2 code`) %>%
+  subset(select = c("name", "country_code")) # only need the 3-digit code
+
+iso_countries <- merge(countries_clean, iso_codes, by.x = "country", by.y = "name")
+head(iso_countries)
+```
+
+
+## IQ 1: Is there a correlation between a country's GDP and the total sum of Kiva loans? (Boris)
 
 To answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
 
@@ -80,9 +112,7 @@ ggplotly(plot_kiva_loans_world_gdp)
 
 The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
 
-## Research Question 2
-
-What is the distribution of funding between the Kiva designated sectors?
+## IQ 2: What is the distribution of funding between the Kiva designated sectors?
 
 ```{r}
 loan_data %>%
@@ -126,23 +156,6 @@ head(agriculture_loans)
 Let's explore where most of these agriculture-related loans are going.
 
 ```{r}
-# Creating our own 'Countries' dataset from two other datasets
-countries <- read_csv("data/countries.csv")
-countries_clean <- countries %>%
-  clean_names() %>%
-  subset(select = c("country", "region", "population", "pop_density_per_sq_mi", 
-                    "infant_mortality_per_1000_births", "gdp_per_capita", "literacy_percent",
-                    "phones_per_1000", "arable_percent", "crops_percent"))
-iso_codes <- read_csv("data/iso_codes.csv") %>%
-  rename(name = `English short name lower case`) %>%
-  rename(country_code = `Alpha-2 code`) %>%
-  subset(select = c("name", "country_code")) # only need the 3-digit code
-
-iso_countries <- merge(countries_clean, iso_codes, by.x = "country", by.y = "name")
-head(iso_countries)
-```
-
-```{r}
 # Merging with agriculture loans
 kiva_countries <- merge(agriculture_loans, iso_countries, by.x = "country_code", by.y = "country_code")
 
@@ -150,7 +163,6 @@ kiva_countries <- merge(agriculture_loans, iso_countries, by.x = "country_code",
 agriculture_by_region <- kiva_countries %>% 
   group_by(region.y) %>%
   summarise(sum(loan_amount))
-
 ```
 
 <br>
