@@ -93,28 +93,16 @@ kiva_countries <- merge(kiva_loans, iso_countries, by.x = "country_code", by.y =
 To answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
 
 ```{r, warning = FALSE, message = FALSE}
-world_gdp <- read_csv("data/world_gdp.csv") # read in GDP data 
-kiva_loans_country <- kiva_loans %>%
-  rename(Country = "country") %>% 
-  group_by(Country) %>% # aggregates by country
-  summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
+kiva_gdp <- kiva_countries %>%
+  group_by(country.x, gdp_per_capita) %>%
+  summarise(total_loans = sum(loan_amount))
 
-world_gdp <- world_gdp %>% 
-  rename(Country = "Country Name") %>% # renames country
-   mutate(Country = recode(Country, `Congo, Rep.` = "Congo", `Congo, Dem. Rep.` = "The Democratic Republic of the Congo", `Cote d'Ivoire` = "Cote D'Ivoire", `Egypt, Arab Rep.` = "Egypt", `Kyrgyz Republic` = "Kyrgyzstan", `Lao PDR` = "Lao People's Democratic Republic", `Myanmar` = "Myanmar (Burma)", `West Bank and Gaza` = "Palestine", `St. Vincent and the Grenadines` = "Saint Vincent and the Grenadines", `Turks and Caicos Islands` = "Turkey", `Virgin Islands (U.S.)` = "Virgin Islands", `Yemen, Rep.` = "Yemen")) %>% # renames country names that differ from the kiva data set
-  group_by(Country) %>% # aggregates by country
-  rename(Country_GDP = "2015") %>% # renames country GDP
-  summarise(Country_GDP) # creates a new data frame
-
-kiva_loans_world_gdp <- merge(kiva_loans_country, world_gdp, all.x = T, all.y = F) # merges the two data frames
-colnames(kiva_loans_world_gdp) <- c("Country", "Loan Sum", "GDP") # renames the columns
-
-plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `GDP`, y = `Loan Sum`, Country = `Country`)) +
+plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `gdp_per_capita`, y = `total_loans`, country = `country.x`)) +
   geom_point(colour  = "darkgreen") + 
   scale_x_continuous(trans = 'log10') +
   scale_y_continuous(trans = 'log10') +
   labs(x = "GDP (USD)", y = "Sum of Loans (USD)", title = "Exponetial Scatter plot for the Sum of Kiva loans against the GDP for each Country")
-ggplotly(plot_kiva_loans_world_gdp)
+ggplotly(plot_kiva_gdp)
 ```
 
 The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
