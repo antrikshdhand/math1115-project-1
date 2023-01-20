@@ -59,7 +59,7 @@ Let's create our own country dataset.
 
 Sources: 
 - https://www.kaggle.com/datasets/juanumusic/countries-iso-codes
-- https://ourworldindata.org/grapher/gross-domestic-product 
+- https://www.kaggle.com/datasets/fernandol/countries-of-the-world
 
 NEED TO ELABORATE ON THESE SOURCES...
 
@@ -167,9 +167,17 @@ kiva_countries <- merge(agriculture_loans, iso_countries, by.x = "country_code",
 
 # Grouping agriculture loans by region
 agriculture_by_region <- kiva_countries %>% 
-  group_by(region.y) %>%
-  summarise(sum(loan_amount))
+  group_by(region = region.y) %>%
+  summarise(total_loans_sum = sum(loan_amount))
 ```
+
+```{r}
+ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
+  geom_col(stat = "identity") +
+  theme(axis.text.x = element_text(angle=90),
+          axis.text.y = element_text(angle=90))
+```
+
 
 <br>
 
