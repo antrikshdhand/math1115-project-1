@@ -34,6 +34,7 @@ Clear, interesting summary of the main insights from the report. [Max 100 words]
 library(tidyverse)
 library(janitor)
 library(plotly)
+library(gt)
 ```
 
 ## Initial Data Analysis (IDA)
@@ -78,6 +79,12 @@ iso_codes <- read_csv("data/iso_codes.csv") %>%
 
 iso_countries <- merge(countries_clean, iso_codes, by.x = "country", by.y = "name")
 head(iso_countries)
+```
+
+```{r}
+# Merging Countries dataset with Kiva loans
+
+kiva_countries <- merge(kiva_loans, iso_countries, by.x = "country_code", by.y = "country_code")
 ```
 
 
@@ -128,7 +135,6 @@ loan_data %>%
 Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors receive double the amount of funding as the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
 
 ```{r}
-library(gt)
 loan_data %>%
   filter(sector == 'Food') %>%
   select(use) %>%
