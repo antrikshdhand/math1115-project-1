@@ -1,9 +1,10 @@
 ---
-title: "An investigation into the spread of Kiva loans around the world"
+title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
-subtitle: "For MATH1115: Project 1"
-date: "University of Sydney | January 2022"
-bibliography: references.bib
+subtitle: "An Investigation of Kiva Crowdfunding data"
+date: "University of Sydney | MATH1115 | JAN 2023"
+# You can change the title, subtitle, author etc.
+# if you do not want a subtitle, author, or date just delete or comment # the the line!
 output:
   html_document:
     fig_caption: yes
@@ -14,33 +15,36 @@ output:
     css: 
       - https://use.fontawesome.com/releases/v5.0.6/css/all.css
     #This will allow you to insert icons in your document, thanks to [Font Awesome](http://fontawesome.io).
+    #You will find an examples below.
+    # If you are knitting your document but not connected to the internet, place a "#" in front of the css line above with the font-awesome.min.css line to comment it out. This will let you knit the document in draft form until you connect again and knit the final. Note that when you do this some elements will be missing from the knitted slides. 
     toc: true
+    #This adds a Table of Contents (toc).
     toc_depth: 3
+    #This controls the number of subheadings included in the toc.
     toc_float: true
+    #This allows toc to update relative to your location as you scroll down the html page.
     code_folding: hide
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
+    
+    # More information: http://rmarkdown.rstudio.com/html_document_format.html
 ---
 
 <br>
 
 # Executive Summary
-
-Clear, interesting summary of the main insights from the report. [Max 100 words].
+- The aim of this report is to ...
+- The main discoveries are ...
 
 <br>
 
 # Full Report
 
-```{r}
-library(tidyverse)
-library(janitor)
-library(plotly)
-library(gt)
-```
-
 ## Initial Data Analysis (IDA)
 
- - Origin of data reviewed and critically assessed incl reliability and limitations
-  - Kiva Data (~ 100 words)
+# Initial Data Analysis (IDA)
+
+The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population, and this initiative was created so members of the public could help Kiva better understand the levels of poverty in areas they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
+
   - World Data (~50)
  - Data wrangling necessary and rational (~75)
  - Potential interested stakeholders (~75)
@@ -50,6 +54,14 @@ The GDP data set used in research question one is from the World Bank, it curren
 https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
 
 ## Data setup
+
+
+```{r, message = 'FALSE'}
+library(tidyverse)
+library(tmap)
+library(countrycode)
+```
+
 
 ```{r}
 kiva_loans <- read_csv("data/kiva_loans.csv") # read in Kiva data
@@ -87,39 +99,27 @@ head(iso_countries)
 kiva_countries <- merge(kiva_loans, iso_countries, by.x = "country_code", by.y = "country_code")
 ```
 
+## Research Question 1
+##Is there are correlation between a Country's GDP and its total loan Sum?
 
-## IQ 1: Is there a correlation between a country's GDP and the total sum of Kiva loans? (Boris)
-
-To answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
-
+To Answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan Sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
 ```{r, warning = FALSE, message = FALSE}
-world_gdp <- read_csv("data/world_gdp.csv") # read in GDP data 
-kiva_loans_country <- kiva_loans %>%
-  rename(Country = "country") %>% 
-  group_by(Country) %>% # aggregates by country
-  summarise(sum(loan_amount)) # calculates the total loan sum per country and creates a new data frame
+kiva_gdp <- kiva_countries %>%
+  group_by(country.x, gdp_per_capita) %>%
+  summarise(total_loans = sum(loan_amount))
 
-world_gdp <- world_gdp %>% 
-  rename(Country = "Country Name") %>% # renames country
-   mutate(Country = recode(Country, `Congo, Rep.` = "Congo", `Congo, Dem. Rep.` = "The Democratic Republic of the Congo", `Cote d'Ivoire` = "Cote D'Ivoire", `Egypt, Arab Rep.` = "Egypt", `Kyrgyz Republic` = "Kyrgyzstan", `Lao PDR` = "Lao People's Democratic Republic", `Myanmar` = "Myanmar (Burma)", `West Bank and Gaza` = "Palestine", `St. Vincent and the Grenadines` = "Saint Vincent and the Grenadines", `Turks and Caicos Islands` = "Turkey", `Virgin Islands (U.S.)` = "Virgin Islands", `Yemen, Rep.` = "Yemen")) %>% # renames country names that differ from the kiva data set
-  group_by(Country) %>% # aggregates by country
-  rename(Country_GDP = "2015") %>% # renames country GDP
-  summarise(Country_GDP) # creates a new data frame
-
-kiva_loans_world_gdp <- merge(kiva_loans_country, world_gdp, all.x = T, all.y = F) # merges the two data frames
-colnames(kiva_loans_world_gdp) <- c("Country", "Loan Sum", "GDP") # renames the columns
-
-plot_kiva_loans_world_gdp <- ggplot(kiva_loans_world_gdp, aes(x = `GDP`, y = `Loan Sum`, Country = `Country`)) +
+plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `gdp_per_capita`, y = `total_loans`, country = `country.x`)) +
   geom_point(colour  = "darkgreen") + 
   scale_x_continuous(trans = 'log10') +
   scale_y_continuous(trans = 'log10') +
   labs(x = "GDP (USD)", y = "Sum of Loans (USD)", title = "Exponetial Scatter plot for the Sum of Kiva loans against the GDP for each Country")
-ggplotly(plot_kiva_loans_world_gdp)
+ggplotly(plot_kiva_gdp)
 ```
-
 The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
 
-## IQ 2: What is the distribution of funding between the Kiva designated sectors?
+## Research Question 2
+
+What is the distribution of funding between the Kiva designated sectors?
 
 ```{r}
 loan_data %>%
@@ -135,6 +135,7 @@ loan_data %>%
 Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors receive double the amount of funding as the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
 
 ```{r}
+library(gt)
 loan_data %>%
   filter(sector == 'Food') %>%
   select(use) %>%
@@ -143,33 +144,25 @@ loan_data %>%
 
 ```
 
+
 The conclusions drawn from research Q1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
 
 This will need to be formatted properly 
 
 Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
 
-## IQ 3: A deeper look into the agriculture sector
+## Research Question 3
 
-As most Kiva funding went towards agriculture-related activities (as found by IQ 2), it may be interesting to explore this sector further.
-
-```{r}
-# filtering all agriculture-related Kiva loans 
-agriculture_loans <- kiva_loans[kiva_loans["sector"] == "Agriculture", ]
-head(agriculture_loans)
-```
-
-Let's explore where most of these agriculture-related loans are going.
+Insert text and analysis. 
 
 ```{r}
-# Merging with agriculture loans
-kiva_countries <- merge(agriculture_loans, iso_countries, by.x = "country_code", by.y = "country_code")
-
 # Grouping agriculture loans by region
 agriculture_by_region <- kiva_countries %>% 
   group_by(region = region.y) %>%
   summarise(total_loans_sum = sum(loan_amount))
 ```
+
+Summary: 
 
 ```{r}
 ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
@@ -180,6 +173,8 @@ ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
 
 
 <br>
+
+## Research Question 4
 
 # References
 
