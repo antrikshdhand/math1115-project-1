@@ -60,6 +60,8 @@ https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImrid
 library(tidyverse)
 library(tmap)
 library(countrycode)
+library(janitor)
+library(plotly)
 ```
 
 
