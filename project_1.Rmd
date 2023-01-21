@@ -126,7 +126,7 @@ The GDP data in the scatter plot above is made up of GDP data from 2015. This wa
 What is the distribution of funding between the Kiva designated sectors?
 
 ```{r}
-loan_data %>%
+ kiva_loans %>%
   group_by(sector) %>%
   summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
   ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col() +  # Represents the data as a side by side bar chart with colour
@@ -140,7 +140,7 @@ Reviewing the above bar plot, we can see that agriculture, food and retail are b
 
 ```{r}
 library(gt)
-loan_data %>%
+kiva_loans %>%
   filter(sector == 'Food') %>%
   select(use) %>%
   slice(1:10) %>% 
@@ -178,7 +178,103 @@ ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
 
 <br>
 
-## Research Question 4
+## Research Question 4 <br>
+
+What Is The Average Loan Amounts Per Gender in Each Region?
+
+
+```{r, warning = FALSE, message = FALSE}
+
+## Filtering out data which does not have either Male or Females in borrower_genders column. 
+
+genders_clean <- kiva_loans %>% 
+
+  filter(!is.na(borrower_genders) & borrower_genders %in% c("male", "female")) 
+
+  
+
+## Finding the mean funded amount for genders dependent on country 
+
+summary_aggregated <- genders_clean %>% 
+
+  group_by(country, borrower_genders) %>% 
+
+  summarize(mean_funded_amount = mean(funded_amount)) 
+
+   
+
+## Making columns and separating data 
+
+summary_aggregated <- summary_aggregated %>% 
+
+  mutate(males = ifelse(borrower_genders == "male", mean_funded_amount, 0), females = ifelse(borrower_genders == "female", mean_funded_amount, 0)) 
+
+  
+
+## Synthesizing data 
+
+synthesized_data <- summary_aggregated %>% 
+
+  group_by(country) %>% 
+
+  summarize(male = sum(males), female = sum(females)) 
+
+  
+
+## Renaming a column 
+
+synthesized_data <- rename(synthesized_data, c("Country" = "country")) 
+
+countries_clean <- rename(countries_clean, c("Country" = "country")) 
+
+  
+
+## Combining male and female data with countries data 
+
+countries_clean <- inner_join(countries_clean, synthesized_data, by = "Country") 
+
+  
+
+## Regions Only 
+
+regions_data <- countries_clean %>% 
+
+  group_by(region) %>% 
+
+  summarize(male = sum(male), female = sum(female)) 
+
+  
+
+## Making it look nice 
+
+regions_data <- regions_data %>% 
+
+  gather(key = "gender", value = "value", male, female) 
+
+  
+
+## Plotting Side by Side Graph 
+
+ggplotly(ggplot(data = regions_data, aes(x = region, y = value, fill = gender)) + 
+
+           geom_bar(stat = "identity", position = "dodge") + 
+
+           labs(x = "\nRegions", y = "Mean Loan Amount\n", title = "\n Mean Loan Amount Per Gender in Regions\n") + 
+
+           theme(plot.title = element_text(hjust = 0.5), 
+
+                 axis.title.x = element_text(face = "bold", colour = "red", size = 10), 
+
+                 axis.title.y = element_text(face = "bold", colour = "red", size = 10)) + 
+
+                 theme(axis.text.x = element_text(angle = 45, hjust = 1))) 
+
+
+
+
+
+```
+
 
 # References
 
