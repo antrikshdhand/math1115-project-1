@@ -1,7 +1,7 @@
 ---
 title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
-subtitle: "An Investigation of Kiva Crowdfunding data"
+subtitle: "An Investigation into Kiva Crowdfunding data"
 date: "University of Sydney | MATH1115 | JAN 2023"
 # You can change the title, subtitle, author etc.
 # if you do not want a subtitle, author, or date just delete or comment # the the line!
@@ -41,17 +41,14 @@ output:
 
 ## Initial Data Analysis (IDA)
 
-# Initial Data Analysis (IDA)
+The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
 
-The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population, and this initiative was created so members of the public could help Kiva better understand the levels of poverty in areas they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
+The world_gdp data set used in research question one is from the World Bank. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The only limitation is some of the country names don't match the ones in the kiva dataset and there are no iso codes for easier correlation. Therefore the 
 
-  - World Data (~50)
+ - World Data (~50)
  - Data wrangling necessary and rational (~75)
  - Potential interested stakeholders (~75)
 
-The GDP data set used in research question one is from the World Bank, it currently contains global annual GDP data for 266 countries from as early as 1960 (depending on the country) to 2021. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The onyl limitation is some of the country names don't exactyl match the ones in the kiva dataset. 
-
-https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?fbclid=IwAR29u5holItcdJImridwqJs2rhiEvhytJR35XB6dSAoYRqIRUEJ9MEfDtRo
 
 ## Data setup
 
@@ -82,9 +79,7 @@ NEED TO ELABORATE ON THESE SOURCES...
 countries <- read_csv("data/countries.csv")
 countries_clean <- countries %>%
   clean_names() %>%
-  subset(select = c("country", "region", "population", "pop_density_per_sq_mi", 
-                    "infant_mortality_per_1000_births", "gdp_per_capita", "literacy_percent",
-                    "phones_per_1000", "arable_percent", "crops_percent"))
+  subset(select = c("country", "region"))
 
 iso_codes <- read_csv("data/iso_codes.csv") %>%
   rename(name = `English short name lower case`) %>%
@@ -102,24 +97,35 @@ kiva_countries <- merge(kiva_loans, iso_countries, by.x = "country_code", by.y =
 ```
 
 ## Research Question 1
-##Is there are correlation between a Country's GDP and its total loan Sum?
+##Is there are correlation between a country's GDP per capita and its total loan sum?
 
-To Answer this question an interactive scatter plot was created using the below code. Hovering above a data point will bring up the country's name, its GDP and its total loan Sum. Both axis are logarithmic with a base of 10 in order to spread out the data.
+To Answer this question an interactive scatter plot was drawn using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
 ```{r, warning = FALSE, message = FALSE}
-kiva_gdp <- kiva_countries %>%
-  group_by(country.x, gdp_per_capita) %>%
-  summarise(total_loans = sum(loan_amount))
+world_gdp <- read_csv("data/world_gdp.csv", skip = 4) # reads the file "world_gdp.csv" and assigns it as "world_gdp"
 
-colnames(kiva_gdp) <- c("Country", "GDP per Capita", "Loan Sum")
+gdp_cleaned <- world_gdp %>% 
+  rename(country = "Country Name") %>% # renames country
+  mutate(country = recode(country, `Congo, Rep.` = "Congo", `Congo, Dem. Rep.` = "The Democratic Republic of the Congo", `Cote d'Ivoire` = "Cote D'Ivoire", `Egypt, Arab Rep.` = "Egypt", `Kyrgyz Republic` = "Kyrgyzstan", `Lao PDR` = "Lao People's Democratic Republic", `Myanmar` = "Myanmar (Burma)", `West Bank and Gaza` = "Palestine", `St. Vincent and the Grenadines` = "Saint Vincent and the Grenadines", `Turks and Caicos Islands` = "Turkey", `Virgin Islands (U.S.)` = "Virgin Islands", `Yemen, Rep.` = "Yemen")) %>% # renames country names that differ from the kiva data set %>% 
+  group_by(country) %>% # aggregates by country
+  rename(country_gdp = "2015") %>% # renames country GDP
+  summarise(country_gdp) # creates a new data frame
+
+kiva_gdp <- kiva_loans %>%
+  group_by(country) %>%
+  summarise(sum(loan_amount))
+
+kiva_gdp <- merge(kiva_gdp, gdp_cleaned, all.x = T, all.y = F) # merges the two data frames
+
+colnames(kiva_gdp) <- c("Country", "Loan Sum", "GDP per Capita")
 
 plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita`, y = `Loan Sum`, country = `Country`)) +
-  geom_point(colour  = "darkgreen") + 
+  geom_point(colour  = "magenta") + 
   scale_x_continuous(trans = 'log10') +
   scale_y_continuous(trans = 'log10') +
-  labs(x = "GDP (USD)", y = "Sum of Loans (USD)", title = "Exponetial Scatter plot for the Sum of Kiva loans against the GDP for each Country")
+  labs(x = "GDP pe capita (USD)", y = "Sum of Loans (USD)", title = "The total sum of Kiva loans against the GDP per capita for each country")
 ggplotly(plot_kiva_gdp)
 ```
-The GDP data in the scatter plot above is made up of GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2013 to 2017. GDP and Loan Sum appear to have a slight negative correlation with countries with a relatively low accounting for the majority of loaned money.
+The GDP data in the scatter plot above utilities GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2014 to 2017. The plot has clustering towards the top left, which implies that countries with a lower GDP per capita account for the majority of loaned money. There is however no direct linear correlation between loaned amount and GDP per capita. It is important to note that countries that have requested the most money tend to be developing countries with relatively low GDP. Which leads into the next research question which looks into how the funding is distributed per sector. 
 
 ## Research Question 2
 
