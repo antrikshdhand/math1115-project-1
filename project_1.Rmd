@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ---
 title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
@@ -28,7 +28,7 @@ output:
     #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
     
     # More information: http://rmarkdown.rstudio.com/html_document_format.html
----
+
 
 <br>
 
@@ -282,7 +282,6 @@ https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2021&name_desc=false&sta
 
 
 <br>
-=======
 ---
 title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
@@ -312,7 +311,6 @@ output:
     #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
     
     # More information: http://rmarkdown.rstudio.com/html_document_format.html
----
 
 <br>
 
