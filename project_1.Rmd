@@ -41,19 +41,9 @@ output:
 
 ## Initial Data Analysis (IDA)
 
-The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
+The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. The world_gdp data is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. It has a CC-BY 4.0 license allowing users to copy, modify and distribute data in any format for any purpose (World Bank, 2021). 
 
-The world_gdp data is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. It has a CC-BY 4.0 license allowing users to copy, modify and distribute data in any format for any purpose (World Bank, 2021). 
-
-
-
-(((The countries dataset from kaggle is not as reliable as an independent user uploaded the data. Some other kaggle users have expressed concern about the data's reliability. Since only the country name and region data has been used, we believe that it is suitable for our uses in this report.)))
-- Feel free to cut out if too long
-
-
-Some wrangling of data was required in order to use the datasets. Most wrangling of data was grouping to isolate variables for comparison. Functions such as mutate, rename and merge were also used to change variable values, rename columns and merge datasets together for the generation of our figures. 
-
-Potential stakeholders for this report would be those looking to potentially loan out money to others through services like Kiva, that want to know where their money is being sent and how it is being used. This report is a general overview about the types of people that apply for the loans, how much their loans are and how the loaned money is used. 
+Some wrangling of data was required in order for it to be useful. Using the group_by and filter functions we were able to isolate specific variables for comparison . Functions such as mutate, rename and merge were also used to change variable values, rename columns and merge datasets together for the generation of our figures. Kiva Crowdfunding would be very interested in this report as it would give them direct insight into the the way in which their loans are regionally and categorically distribute. Additionally, those looking to loan out money through Kiva, may want to know where their money is being sent and how it is being used.  
 
 ## Data setup
 
@@ -130,7 +120,7 @@ plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita`, y = `Loan Sum`, coun
   labs(x = "GDP pe capita (USD)", y = "Sum of Loans (USD)", title = "The total sum of Kiva loans against the GDP per capita for each country")
 ggplotly(plot_kiva_gdp)
 ```
-The GDP data in the scatter plot above utilities the GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2014 to 2017. The plot has clustering in the top left, which implies that countries with a lower GDP per capita account for the majority of loaned money. There is however no direct linear correlation between the total loaned amount and GDP per capita. It is important to note that the countries that with the highest total loan sum tend to be developing countries with a relatively low GDP per capita. Agriculture tends to be the largest sector in terms of their shares in GDP and employment for these sorts of countries (https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=7d15e1f8e20c97dd4eeeccd2ad3f5e3e4255b831#:~:text=Agricultural%20Spending,shares%20in%20GDP%20and%20employment.). Which is interesting to note as it leads into the next research question which looks into how the funding is distributed per sector. 
+The GDP data in the scatter plot above utilises the GDP data from 2015. This data was chosen for as it best matched with the Kiva loan data which is from 2014 to 2017. The plot has a slight clustering in the top left, which may imply that there is a relationship between low GDP per capita and higher loaned amounts, however there is no direct linear correlation to support this. It is clear that the data is fairly right skewed, indicating that most loans are posted in countries with low GDP per capita. It is Kiva's mission to provide loans to those who cannot access banking or financial services, as these countries are typically those with low GDP per capita, we can infer that Kiva is achieving their goal (Kiva, 2023). 
 
 ## Research Question 2
 
@@ -161,10 +151,6 @@ kiva_loans %>%
 
 
 The conclusions drawn from research Q1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
-
-This will need to be formatted properly 
-
-Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
 
 ## Research Question 3
 
