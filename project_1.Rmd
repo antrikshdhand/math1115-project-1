@@ -193,6 +193,7 @@ ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
 
 What Is The Average Loan Amounts Per Gender in Each Region?
 
+A side by side bar graph was created to visualise the mean loan amounts per gender in each region. It's worth mentioning that 4,221 sets of data with missing gender information were excluded from the dataset before creating the graph. 
 
 ```{r, warning = FALSE, message = FALSE}
 
@@ -278,13 +279,13 @@ ggplotly(ggplot(data = regions_data, aes(x = region, y = value, fill = gender)) 
 
                  axis.title.y = element_text(face = "bold", colour = "red", size = 10)) + 
 
-                 theme(axis.text.x = element_text(angle = 45, hjust = 1))) 
-
-
-
-
+                 theme(axis.text.x = element_text(angle = 45, hjust = 1)))
 
 ```
+
+Based on the dataset, it was found that for every 1 male borrower, there were 3.16 female borrowers. This is reflected in the graph, as females had a higher mean loan amount per gender in 5 out of 9 regions. The region of Latin America and the Caribbean stood out as having the largest differential gap in mean loan amounts between males and females among all the other regions. 
+
+This can be attributed to the high levels of gender inequality in this region, as concluded in a study conducted by the Inter-American Development Bank (IDB) titled “An Unequal Olympiad: Gender Equity in Latin American and Caribbean Companies” (Ines et al. 2021). The study found that women hold only 15% of management positions, 35% of women in the workforce have access to advanced technologies, and 6 out of 10 companies do not provide any type of maternity leave beyond what is determined by law. Highlighting the need for further research and action to address gender inequality in this region, and the potential impact it has on loan amounts.
 
 
 # References
@@ -292,6 +293,8 @@ ggplotly(ggplot(data = regions_data, aes(x = region, y = value, fill = gender)) 
 Style: APA 
 
 https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2021&name_desc=false&start=1960&view=chart
+
+Intes, B.A., Angeles, B.A., Andrea, M.S., Magdalena, B., Natalia, S.A.T., Stephanie, O.C. (2021). Una olimpíada desigual: la equidad de género en las empresas latinoamericanas y del Caribe. http://dx.doi.org/10.18235/0003427
 
 
 <br>
