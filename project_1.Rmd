@@ -182,25 +182,6 @@ agriculture_by_region <- kiva_world_ag %>%
 head(agriculture_by_country)
 ```
 
-
-
-```{r}
-# Grouping agriculture loans by region
-agriculture_by_region <- kiva_countries %>% 
-  group_by(region = region.y) %>%
-  summarise(total_loans_sum = sum(loan_amount))
-```
-
-Summary: 
-
-```{r}
-ggplot(agriculture_by_region, aes(x = region, y = total_loans_sum)) +
-  geom_col(stat = "identity") +
-  theme(axis.text.x = element_text(angle=90),
-          axis.text.y = element_text(angle=90))
-```
-
-
 <br>
 
 ## Research Question 4 <br>
