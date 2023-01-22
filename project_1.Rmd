@@ -43,12 +43,9 @@ output:
 
 The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
 
-The world_gdp data set used in research question one is from the World Bank. The data itself is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. The only limitation is some of the country names don't match the ones in the kiva dataset and there are no iso codes for easier correlation. Therefore the 
+The world_gdp data is reliable as it is collected and consolidated by the world bank, which is a global organisation run by the United Nations. It has an Open Database License, which allows users to copy, modify and distribute data. The only limitation is some of the country names don't match the ones in the Kiva dataset and the iso codes are in the three letter format rather than the two letter one used in the Kiva dataset. Some wrangling of data was required in order to use the datasets. Most wrangling of data was grouping to isolate variables for comparison. Functions such as mutate, rename and merge were also used to change variable values, rename columns and merge datasets together for the generation of our figures. 
 
- - World Data (~50)
- - Data wrangling necessary and rational (~75)
- - Potential interested stakeholders (~75)
-
+Potential stakeholders for this report would be those looking to potentially loan out money to others through services like Kiva, that want to know where their money is being sent and how it is being used. This report is a general overview about the types of people that apply for the loans, how much their loans are and how the loaned money is used. 
 
 ## Data setup
 
