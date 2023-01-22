@@ -182,22 +182,6 @@ agriculture_by_region <- kiva_world_ag %>%
 head(agriculture_by_country)
 ```
 
-```{r}
-# create data for world coordinates using 
-# map_data() function
-world_coordinates <- map_data("world")
-  
-# create world map using ggplot() function
-ggplot() +
-  
-# geom_map() function takes world coordinates 
-# as input to plot world map
-  geom_map(
-    data = world_coordinates, map = world_coordinates,
-    aes(long, lat, map_id = region)
-  )
-```
-
 
 
 ```{r}
