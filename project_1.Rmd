@@ -56,9 +56,12 @@ kiva_loan_regions <- read_csv("data/loan_themes_by_region.csv")
 world_gdp <- read_csv("data/world_gdp.csv", skip = 4) 
 ```
 
-However, before we begin our geographical analysis on the distribution of Kiva agricultural loans around the world, we first need to setup our data. The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the ISO code related to each loan, which in combination with the `tmap` package will provide us with the geographical data we want.
+This report will also conduct some geographical analysis on the distribution of Kiva loans. Before we can do this though, we must first setup our data. The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the ISO code related to each loan, which in combination with the `tmap` package will provide us with the geographical data we want.
 
 ```{r}
+# tmap in-built World dataset
+data("World")
+
 kiva_loan_ids_subset <- kiva_loan_ids %>%
   select(c("id", "Loan Theme ID")) %>%
   rename(loan_theme_id = `Loan Theme ID`)
@@ -85,6 +88,23 @@ is.null(kiva_loans_PKs$loan_theme_id)
 ## IQ 1: Is there a correlation between a country's GDP per capita and its total loan sum?
 
 To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
+
+```{r}
+### FOR BORIS
+
+world_gdp_cap <- World %>%
+  select(c("iso_a3", "gdp_cap_est")) %>%
+  rename(iso = iso_a3)
+
+kiva_sum_2 <- kiva_loans_PKs %>%
+  group_by(iso) %>%
+  summarise(total_loans = sum(loan_amount))
+
+kiva_gdp_2 <- inner_join(kiva_sum_2, world_gdp_cap, by = 'iso')
+
+ggplotly(ggplot(kiva_gdp_2, aes(x = gdp_cap_est, y = total_loans, iso = iso)) + geom_point(colour  = "black") + scale_x_continuous(trans = 'log10') + scale_y_continuous(trans = 'log10'))
+```
+
 
 ```{r, warning = FALSE, message = FALSE}
 # Combining the world_gdp data with the ISO codes kiva dataset in order to merge the country names
@@ -151,7 +171,6 @@ Now let's import the `World` dataset from the `tmap` and explore which parts of 
 
 ```{r}
 # Selecting useful parts of World dataset
-data("World")
 world_data <- World %>%
   select(c("iso_a3", "continent", "economy", "gdp_cap_est", "HPI", "geometry")) %>%
   rename(iso = iso_a3)
