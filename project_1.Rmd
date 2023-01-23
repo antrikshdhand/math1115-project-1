@@ -107,7 +107,7 @@ plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita (USD)`, y = `Loan Sum 
   geom_point(colour  = "black") + 
   scale_x_continuous(trans = 'log10') +
   scale_y_continuous(trans = 'log10') +
-  labs(x = "GDP per capita (USD)", y = "Sum of Loans (Million USD)", title = "The total sum of Kiva loans against the GDP per capita for each country")
+  labs(x = "GDP per capita (USD)", y = "Loan Sum (Million USD)", title = "The total sum of Kiva loans against the GDP per capita for each country")
 ggplotly(plot_kiva_gdp)
 ```
 
