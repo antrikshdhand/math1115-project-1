@@ -58,7 +58,7 @@ world_gdp <- read_csv("data/world_gdp.csv", skip = 4)
 
 This report will also conduct some geographical analysis on the distribution of Kiva loans. Before we can do this though, we must first setup our data. The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the ISO code related to each loan, which in combination with the `tmap` package will provide us with the geographical data we want.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 # tmap in-built World dataset
 data("World")
 
@@ -79,7 +79,7 @@ kiva_loans_PKs <- inner_join(kiva_loans_themeid, kiva_loan_regions_subset, by = 
 
 Note that in the code above we performed an inner join between all three datasets. Due to the presence of NA's and missing data, this process will inevitably cause some data loss. In our case, we lost approximately 30000 rows of data ($~4\%$ of the original dataset). We deem that working with a complete dataset (with no missing loan theme id's or ISO's) is enough to justify this small loss in data.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 # Checking for any null values in the two columns of importance
 is.null(kiva_loans_PKs$iso)
 is.null(kiva_loans_PKs$loan_theme_id)
@@ -87,9 +87,9 @@ is.null(kiva_loans_PKs$loan_theme_id)
 
 ## IQ 1: Is there a correlation between a country's GDP per capita and its total loan sum?
 
-To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
+To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axes are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 ### FOR BORIS
 
 world_gdp_cap <- World %>%
@@ -131,37 +131,37 @@ plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita (USD)`, y = `Loan Sum 
 ggplotly(plot_kiva_gdp)
 ```
 
-The GDP data in the scatter plot above utilities the GDP data from 2015. This was done to make a better comparison with the kiva loan data which has data from 2014 to 2017. The plot has clustering in the top left, which implies that countries with a lower GDP per capita account for the majority of loaned money. There is however no direct linear correlation between the total loaned amount and GDP per capita. It is important to note that the countries that with the highest total loan sum tend to be developing countries with a relatively low GDP per capita. Agriculture tends to be the largest sector in terms of their shares in GDP and employment for these sorts of countries (https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=7d15e1f8e20c97dd4eeeccd2ad3f5e3e4255b831#:~:text=Agricultural%20Spending,shares%20in%20GDP%20and%20employment.). Which is interesting to note as it leads into IQ 2 which looks into how the funding is distributed per sector. 
+The GDP data in the scatter plot above is from 2015, this year was used as it makes for the most accurate match up with the Kiva loan data which is from 2014 to 2017. The plot has clustering in the top left which initially made us suspect that a relationship exists between lower GDP per capita and higher amounts of loaned money. When attempting a curve fit of the data it was found however that there was no obvious relationship. What we can discern from the data is that it is right skewed, indicting that countries with lower GDP's per capita make up most of total loans. In these countries many people do not have access to financial services or banking all-together, this creates a need for them to use a charitable service like Kiva. And on the other hand, it is the goal of Kiva to provide such individuals with access to loans (Kiva About, 2023). Hence our data demonstrates the free market in action, those who live in countries with low GDP's need Kiva, and Kiva needs them. 
 
 ## IQ 2: What is the distribution of funding between the Kiva designated sectors?
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
  kiva_loans %>%
   group_by(sector) %>%
   summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
-  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col(fill = "black") +  # Represents the data as a side by side bar chart with colour
+  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col(fill = "black") +  # Represents the data as coloumn chart
   labs(x = "Sectors", y = "Total Funding (Million USD)", title = 'Total Kiva funding per sector') +
-  theme_classic() + #Classic theme just an example or an idea of what can be done and how
+  theme_classic() + 
   geom_text(aes(label = total_funding), vjust = -0.5, size = 2) +
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=0.4))
 ```
 
 Reviewing the above bar plot, we can see that agriculture, food and retail are by far the most funded Kiva sectors. For context, these three sectors received twice the amount of funding than the remaining 12. Interestingly, if we review the ‘Use’ column of the data frame it can also be observed that many loans categorised for retail are in fact loans to purchase food items such as Salt, Rice, Flour etc.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(gt)
 kiva_loans %>%
-  filter(sector == 'Food') %>%
+  filter(sector == 'Retail') %>%
   select(use) %>%
   slice(1:10) %>% 
-  gt()
+  gt() %>%
+  tab_header(
+    title = "Use data when the loan is categorised as Retail",) %>%
+ cols_label(use = "Use")
+
 ```
 
 The conclusions drawn from IQ 1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely the fundees can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
-
-This will need to be formatted properly 
-
-Townsend, R. (2015). Ending poverty and hunger by 2030 : an agenda for the global food system. Washington DC. Retrieved from https://documents.worldbank.org/en/publication/documents-reports/documentdetail/700061468334490682/ending-poverty-and-hunger-by-2030-an-agenda-for-the-global-food-system. 
 
 ## IQ 3: Which parts of the world do agriculture-related loans go to?
 
@@ -169,7 +169,7 @@ As was uncovered in IQ 2, most of Kiva funding goes towards agriculture-related 
 
 Now let's import the `World` dataset from the `tmap` and explore which parts of the world are requesting the most agriculture-related loans.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 # Selecting useful parts of World dataset
 world_data <- World %>%
   select(c("iso_a3", "continent", "economy", "gdp_cap_est", "HPI", "geometry")) %>%
