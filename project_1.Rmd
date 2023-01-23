@@ -87,19 +87,23 @@ is.null(kiva_loans_PKs$loan_theme_id)
 To answer this question an interactive scatter plot was produced using the below code and GDP data from the tmap package. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axis are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
 
 ```{r, warning = FALSE, message = FALSE}
-# Merging the world_gdp data and the kiva dataset to generate an interactive plot
+# Grouping by country and adding the loan amount for the kiva dataset
 kiva_sum <- kiva_loans %>%
   group_by(country) %>%
   summarise(signif(sum(loan_amount)*10^(-6),5))
 
+# Selecting the useful data from World in tmap and renaming the country column
 world_gdp <- World %>%
   select(c("name", "gdp_cap_est")) %>%
   rename(country = name)
 
+# Merging the world_gdp data frame and the kiva_sum data frame
 kiva_gdp <- merge(kiva_sum, world_gdp, all.x = F, all.y = F)
 
+# Changing the column names for the interactive part of the plot
 colnames(kiva_gdp) <- c("Country", "Loan Sum", "GDP per Capita")
 
+# Generating the plot with the axes in log10
 plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita`, y = `Loan Sum`, country = `Country`)) +
   geom_point(colour  = "black") + 
   scale_x_continuous(trans = 'log10') +
