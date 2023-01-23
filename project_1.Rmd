@@ -84,7 +84,6 @@ is.null(kiva_loans_PKs$loan_theme_id)
 
 ## IQ 1: Is there a correlation between a country's GDP per capita and its total loan sum?
 
-
 To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axes are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
 
 ```{r, warning = FALSE, message = FALSE}
