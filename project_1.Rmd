@@ -36,7 +36,7 @@ Some wrangling of the data was required to generate the plots utilising the Kiva
 
 ## Data setup
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(tmap)
 library(countrycode)
@@ -44,7 +44,7 @@ library(janitor)
 library(plotly)
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message = FALSE, warning = FALSE}
 # Kiva loans dataset
 kiva_loans <- read_csv("data/kiva_loans.csv")
 
