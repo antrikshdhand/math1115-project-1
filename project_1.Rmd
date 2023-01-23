@@ -88,25 +88,8 @@ is.null(kiva_loans_PKs$loan_theme_id)
 To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axes are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
 
 ```{r, warning = FALSE, message = FALSE}
-### FOR BORIS
-
-world_gdp_cap <- World %>%
-  select(c("iso_a3", "gdp_cap_est")) %>%
-  rename(iso = iso_a3)
-
-kiva_sum_2 <- kiva_loans_PKs %>%
-  group_by(iso) %>%
-  summarise(total_loans = sum(loan_amount))
-
-kiva_gdp_2 <- inner_join(kiva_sum_2, world_gdp_cap, by = 'iso')
-
-ggplotly(ggplot(kiva_gdp_2, aes(x = gdp_cap_est, y = total_loans, iso = iso)) + geom_point(colour  = "black") + scale_x_continuous(trans = 'log10') + scale_y_continuous(trans = 'log10'))
-```
-
-
-```{r, warning = FALSE, message = FALSE}
 # Grouping by country and adding the loan amount for the kiva dataset
-kiva_sum <- kiva_loans %>%
+kiva_loan_sum <- kiva_loans %>%
   group_by(country) %>%
   summarise(signif(sum(loan_amount)*10^(-6),5))
 
@@ -116,7 +99,7 @@ world_gdp <- World %>%
   rename(country = name)
 
 # Merging the world_gdp data frame and the kiva_sum data frame
-kiva_gdp <- merge(kiva_sum, world_gdp, all.x = F, all.y = F)
+kiva_gdp <- merge(kiva_loan_sum, world_gdp, all.x = F, all.y = F)
 
 # Changing the column names for the interactive part of the plot
 colnames(kiva_gdp) <- c("Country", "Loan Sum", "GDP per Capita")
