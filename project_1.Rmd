@@ -133,10 +133,10 @@ The GDP data used in the interactive scatter plot above is pulled from the `Worl
 ## IQ 2: What is the distribution of funding between the Kiva designated sectors?
 
 ```{r, warning = FALSE, message = FALSE}
- kiva_loans %>%
+kiva_loans %>%
   group_by(sector) %>%
   summarise(total_funding = signif(sum(funded_amount)*10^(-6),5)) %>%
-  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_col(fill = "black") +  # Represents the data as column chart
+  ggplot(aes(x=fct_reorder(sector, desc(total_funding)), y = total_funding)) + geom_bar(fill = "cornflowerblue", color = "black", stat = "identity", position = "dodge", width = 0.8) +   # Represents the data as column chart
   labs(x = "Sectors", y = "Total Funding (Million USD)", title = 'Total Kiva funding per sector') +
   theme_classic() + 
   geom_text(aes(label = total_funding), vjust = -0.5, size = 2) +
