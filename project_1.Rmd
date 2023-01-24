@@ -23,7 +23,8 @@ nocite: '@*'
 <br>
 
 # Executive Summary
-The main aim of this research report was to investigate the where and who of Kiva fundees, for this would provide insight to both Kiva itself and potential Kiva lenders. We found that most of the Kiva loans were directed into the Agriculture, Food and Retail sectors, and most commonly originated from countries with a relatively low GDP per capita. Furthermore, there was no general geographic trend found for the distribution of agriculture-related loans around the world. Finally, due to the high levels of inequality found in Kiva’s most common sectors and countries, our report shows that the vast majority of Kiva fundees are Women.
+
+The main aim of this research report was to investigate the where, what for and who to of Kiva fundees, for this would provide insight to Kiva itself, governments and other charitable organisations. We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated from countries with a relatively low GDP per capita. Furthermore, there was no general geographic trend found for the distribution of agriculture-related loans around the world. Finally, due to the high levels of inequality found in Kiva’s most common sectors and countries, our report shows that the vast majority of Kiva fundees are Women.
 
 <br>
 
@@ -31,7 +32,7 @@ The main aim of this research report was to investigate the where and who of Kiv
 
 ## Initial Data Analysis (IDA)
 
-Kiva is a service aimed at providing small loans to the world's unbanked population.
+Kiva is a service aimed at providing small loans to the world's unbanked population. 
 
 The data set used to generate our research questions comes from the Kiva Crowdfunding "Data Science For Good" open data initiative. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans [@kiva_data]. The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish [@creative_commons].
 
