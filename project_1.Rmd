@@ -21,8 +21,9 @@ output:
 <br>
 
 # Executive Summary
-- The aim of this report is to ...
-- The main discoveries are ...
+The main aim of this research report was to investigate the where and who of Kiva fundees for this would provide insight to both Kiva itself and potential Kiva lenders.  We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated in countries with relatively low GDP per capita. 
+It was also found that the vast majority of Kiva fundees were Women, due to the high levels of inequality found in Kiva’s most common sectors and countries. 
+
 
 <br>
 
@@ -82,7 +83,7 @@ is.null(kiva_loans_PKs$iso)
 is.null(kiva_loans_PKs$loan_theme_id)
 ```
 
-## IQ 1: Is there a correlation between a country's GDP per capita and its total loan sum?
+## IQ 1: Is there a Relationship between a country's GDP per capita and its total loan sum?
 
 
 To answer this question an interactive scatter plot was produces using the below code. Hovering above a data point will bring up the country's name, its GDP per capita and its total loan sum. Both axes are logarithmic with a base of 10 in order to spread out the data so relationships can be drawn.
