@@ -89,7 +89,7 @@ kiva_loans_PKs <- inner_join(kiva_loans_themeid, kiva_loan_regions_subset, by = 
 
 Note that in the code above we performed an inner join between all three datasets. Due to the presence of NA's and missing data, this process will inevitably cause some data loss. In our case, we lost approximately 30000 rows of data ($~4\%$ of the original dataset). We deem that the upsides to working with a complete dataset (with no missing loan theme id's or ISO's) is enough to justify this small loss in data.
 
-```{r, warning = FALSE, message = FALSE}
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
 # Checking for any null values in the two columns of importance
 if (is.null(kiva_loans_PKs$iso) || is.null(kiva_loans_PKs$loan_theme_id)) {
   print("Null values present in `iso` or `loan_theme_id` columns.")
