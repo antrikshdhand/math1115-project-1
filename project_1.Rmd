@@ -263,8 +263,8 @@ regions_data <- regions_data %>%
 ## Plotting Side by Side Graph 
 ggplotly(
   ggplot(data = regions_data, aes(x = region, y = value, fill = gender)) + 
-  geom_bar(stat = "identity", position = "dodge") + 
-  scale_fill_manual(values = c("male" = "blue", "female" = "pink")) + 
+  geom_bar(colour = "black", stat = "identity", position = "dodge") + 
+  scale_fill_manual(values = c("male" = "cornflowerblue", "female" = "pink")) + 
   labs(x = "\nRegions", y = "Mean Loan Amount\n") + 
   ggtitle("Mean Loan Amount Per Gender in Regions") + 
   theme(
