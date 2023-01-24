@@ -205,6 +205,13 @@ synthesized_data <- summary_aggregated %>%
   group_by(country) %>% 
   summarize(male = sum(males), female = sum(females)) 
 
+## Merging data with regions
+
+countries <- read_csv("data/countries.csv")
+countries_clean <- countries %>%
+  clean_names() %>%
+  subset(select = c("country", "region"))
+
 ## Renaming a column 
 synthesized_data <- rename(synthesized_data, c("Country" = "country")) 
 countries_clean <- rename(countries_clean, c("Country" = "country")) 
