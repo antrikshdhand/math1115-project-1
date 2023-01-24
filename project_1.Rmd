@@ -41,7 +41,7 @@ As the data has been uploaded by Kiva themselves for the purpose of finding real
 
 Some wrangling of the data was required to generate the plots utilising the Kiva datasets. Most of the wrangling involved grouping and summarising to generate new dataframes which isolated variables for comparison. Also required for the geographical analysis undertaken in IQ 3 was to de-normalise the two supplementary datasets provided by Kiva — `kiva_loan_ids` and `kiva_loan_regions` — to find the 3-digit ISO code that went along with every loan. This process has been undertaken in the data setup section below.
 
-Potential stakeholders for this report would be those looking to potentially loan money to others through charitable services like Kiva, that want to know where their money is being sent and how it is being used.  
+Potential stakeholders for this report would be those looking to potentially loan money to others through charitable services like Kiva, that want to know where their money is being sent and how it is being used. Kiva itself is also a stakeholder of this report.
 
 ## Data setup
 
