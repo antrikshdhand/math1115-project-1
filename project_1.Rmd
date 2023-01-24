@@ -2,13 +2,13 @@
 title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
 subtitle: "An investigation into Kiva crowdfunding data"
-date: "University of Sydney | MATH1115 | JAN 2023"
+date: "University of Sydney | MATH1115 | January 2023"
 output:
   html_document:
     fig_caption: yes
     number_sections: yes
     self_contained: yes
-    theme: flatly
+    theme: bootstrap
     # Other themes can be found at: https://bootswatch.com/
     css: 
       - https://use.fontawesome.com/releases/v5.0.6/css/all.css
@@ -16,6 +16,8 @@ output:
     toc_depth: 3
     toc_float: true
     code_folding: hide
+bibliography: references.bib
+nocite: '@*'
 ---
 
 <br>
@@ -30,9 +32,15 @@ output:
 
 ## Initial Data Analysis (IDA)
 
-The data set used to generate our research questions comes from the Kiva Crowdfunding, ‘Data science for good’ open data initiative. Kiva (2023) is a service aimed at providing small loans to the worlds unbanked population. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans (Kaggle, 2018). The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish (Creative Commons, 2023) The data has been edited by a community member called ‘mfab’ which may reduce the reliability of the data, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. The omission of the COVID-19 pandemic from the data is a notable limitation as the pandemic may have created changes in trends which would have made for interesting research. 
+Kiva is a service aimed at providing small loans to the world's unbanked population. **Perhaps one or two more sentences about Kiva here**
 
-Some wrangling of the data was required to generate the plots utilising the Kiva datasets. Most of the wrangling involved grouping and summarising to generate new dataframes which isolated variables for comparison. Functions such as mutate, rename and merge were also used to change variable values, rename columns and merge datasets together for the generation of our figures. Potential stakeholders for this report would be those looking to potentially loan money to others through charitable services like Kiva, that want to know where their money is being sent and how it is being used.  
+The data set used to generate our research questions comes from the Kiva Crowdfunding "Data Science For Good" open data initiative. This initiative was created so members of the public could help Kiva better understand the levels of poverty in areas where they had active loans [@kiva_data]. The data has a CC0: Public Domain licence meaning that we are free to use and distribute the data as we wish [@creative_commons].
+
+As the data has been uploaded by Kiva themselves for the purpose of finding real insights about their data through an open competition on Kaggle, the data is original (a primary source), unaggregated or edited, and thus can be said to be very reliable. The data has been edited by a community member called `mfab` which may raise some concerns, however as Kiva is the ‘Owner’ it is assumed that they have approved this editor and that the data remains reliable. Somewhat of a limitation is that the data only ranges between 2014 and 2017, and hence any possible deviations from long-established trends occurring as a result of the COVID-19 pandemic cannot be extrapolated. This would have made for an interesting report.
+
+Some wrangling of the data was required to generate the plots utilising the Kiva datasets. Most of the wrangling involved grouping and summarising to generate new dataframes which isolated variables for comparison. Also required for the geographical analysis undertaken in IQ 3 was to de-normalise the two supplementary datasets provided by Kiva — `kiva_loan_ids` and `kiva_loan_regions` — to find the 3-digit ISO code that went along with every loan. This process has been undertaken in the data setup section below.
+
+Potential stakeholders for this report would be those looking to potentially loan money to others through charitable services like Kiva, that want to know where their money is being sent and how it is being used.  
 
 ## Data setup
 
@@ -56,7 +64,8 @@ kiva_loan_regions <- read_csv("data/loan_themes_by_region.csv")
 countries <- read_csv("data/countries.csv")
 ```
 
-This report will also conduct some geographical analysis on the distribution of Kiva loans. Before we can do this though, we must first setup our data. The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the ISO code related to each loan, which in combination with the `tmap` package will provide us with all the geographical data we want.
+The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the 3 digit ISO code related to each loan, which, in combination with the `tmap` package, will allow us to conduct a geographical analysis of Kiva loans.
+
 
 ```{r, warning = FALSE, message = FALSE}
 # tmap in-built World dataset
@@ -81,8 +90,11 @@ Note that in the code above we performed an inner join between all three dataset
 
 ```{r, warning = FALSE, message = FALSE}
 # Checking for any null values in the two columns of importance
-is.null(kiva_loans_PKs$iso)
-is.null(kiva_loans_PKs$loan_theme_id)
+if (is.null(kiva_loans_PKs$iso) || is.null(kiva_loans_PKs$loan_theme_id)) {
+  print("Null values present in `iso` or `loan_theme_id` columns.")
+} else {
+  print("No null values present in `iso` or `loan_theme_id` columns.")
+}
 ```
 
 ## IQ 1: Is there a correlation between a country's GDP per capita and its total loan sum?
@@ -115,7 +127,7 @@ plot_kiva_gdp <- ggplot(kiva_gdp, aes(x = `GDP per Capita`, y = `Loan Sum`, coun
 ggplotly(plot_kiva_gdp)
 ```
 
-The GDP data used in the interactive scatter plot above is pulled from the `World` dataset found within the `tmap` package. The plot has slight clustering towards the top left. This lead us to initially suspect that a relationship may exist between a lower GDP per capita and a higher amount of loaned money. When attempting to fit a regression line to the data, no obvious relationship could be drawn. What we can discern from the data however, is that it is right skewed, indicting that countries with lower GDP's per capita make up most of total loans. Many people in these countries don't have access to financial services or even banking, creating a need for charitable services like Kiva. It is Kiva's goal to provide such individuals with access to loans (Kiva About, 2023). Our data therefore demonstrates the free market in action; those who live in countries with low GDP's need Kiva, and Kiva needs them. 
+The GDP data used in the interactive scatter plot above is pulled from the `World` dataset found within the `tmap` package. The plot has slight clustering towards the top left. This lead us to initially suspect that a relationship may exist between a lower GDP per capita and a higher amount of loaned money. When attempting to fit a regression line to the data, no obvious relationship could be drawn. What we can discern from the data however, is that it is right skewed, indicting that countries with lower GDP's per capita make up most of total loans. Many people in these countries don't have access to financial services or even banking, creating a need for charitable services like Kiva. It is Kiva's goal to provide such individuals with access to loans [@kiva_about]. Our data therefore demonstrates the free market in action; those who live in countries with low GDP's need Kiva, and Kiva needs them. 
 
 ## IQ 2: What is the distribution of funding between the Kiva designated sectors?
 
@@ -144,7 +156,7 @@ kiva_loans %>%
  cols_label(use = "Use")
 ```
 
-The conclusions drawn from IQ 1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely, the loan-takers can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
+The conclusions drawn from IQ 1 inform us that Kiva loans are most typically requested in developing countries with low GDP’s, in these countries access to food is not a given and the creation of a constant food supply may be able to lift some out of poverty. In his 2015 report, Robert Townsend states that for the worlds poorest, growth in agriculture is two to four times more effective in raising living standards than growth in the next closest sector [@townsend_2015]. This fact can create a win-win scenario for all stakeholders. So long as the loan is used wisely, the loan-takers can create more value than they initially borrowed, and funders can see their investment amount to more than its dollar value. As such, it is not surprising that agriculture loans make up 27% of all Kiva loans.  
 
 ## IQ 3: Which parts of the world do agriculture-related loans go to?
 
@@ -258,14 +270,6 @@ ggplotly(
 
 Based on the dataset, it was found that for every 1 male borrower, there were 3.16 female borrowers. This is reflected in the graph, as females had a higher mean loan amount per gender in 5 out of 9 regions. The region of Latin America and the Caribbean stood out as having the largest differential gap in mean loan amounts between males and females among all the other regions. 
 
-This can be attributed to the high levels of gender inequality in this region, as concluded in a study conducted by the Inter-American Development Bank (IDB) titled “An Unequal Olympiad: Gender Equity in Latin American and Caribbean Companies” (Ines et al. 2021). The study found that women hold only 15% of management positions, 35% of women in the workforce have access to advanced technologies, and 6 out of 10 companies do not provide any type of maternity leave beyond what is determined by law. Highlighting the need for further research and action to address gender inequality in this region, and the potential impact it has on loan amounts.
-
+This can be attributed to the high levels of gender inequality in this region, as concluded in a study conducted by the Inter-American Development Bank (IDB) titled “An Unequal Olympiad: Gender Equity in Latin American and Caribbean Companies” [@basco_olimpiada_2021]. The study found that women hold only 15% of management positions, 35% of women in the workforce have access to advanced technologies, and 6 out of 10 companies do not provide any type of maternity leave beyond what is determined by law. Highlighting the need for further research and action to address gender inequality in this region, and the potential impact it has on loan amounts.
 
 # References
-
-Style: APA 
-
-https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2021&name_desc=false&start=1960&view=chart
-
->>>>>>> 5f53c7ebc3744ac36a32f637219ae061d90c04b8
-Intes, B.A., Angeles, B.A., Andrea, M.S., Magdalena, B., Natalia, S.A.T., Stephanie, O.C. (2021). Una olimpíada desigual: la equidad de género en las empresas latinoamericanas y del Caribe. http://dx.doi.org/10.18235/0003427
