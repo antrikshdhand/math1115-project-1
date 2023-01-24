@@ -170,38 +170,47 @@ First we will subset our two key data sources, `World` from the `tmap` package a
 world_data <- World %>%
   select(c("iso_a3", "continent", "economy", "gdp_cap_est", "HPI", "geometry")) %>%
   rename(iso = iso_a3)
-
 # Selecting required columns and rows of kiva_loans dataset using indexing method
 # We are only interested in the Agriculture sector for this IQ!
 kiva_loans_iq3 <- kiva_loans_PKs[kiva_loans_PKs$sector == "Agriculture", c("iso", "region", "funded_amount", "sector", "activity")]
-
-head(kiva_loans_iq3, 3)
 ```
-
-Let us now aggregate this data by country.
 
 ```{r, warning=FALSE, message=FALSE}
 # Performing group_by aggregation on Country
 agriculture_by_country <- kiva_loans_iq3 %>%
   group_by(iso) %>%
   summarise("ag_loans_sum" = sum(funded_amount))
-
-head(agriculture_by_country)
 ```
 
 We simply now have to merge the above dataframe with `world_data` to obtain the geometries of each country and to be able to plot the above loan values on a world map!
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
+library("ggspatial")
 world_data_ag <- left_join(world_data, agriculture_by_country, by = "iso")
-
 # Plotting a choropleth map of the world using ggplot
 # Countries are coloured differently based on the sum of agriculture loans requested through Kiva
-ggplot(world_data_ag) + 
-  geom_sf(aes(fill = ag_loans_sum)) +
-  scale_fill_gradient(low = "red", high = "green")
+ggplotly(
+  ggplot(world_data_ag) + 
+    geom_sf(aes(fill = ag_loans_sum, country = iso)) +
+    scale_fill_viridis_c(alpha = .4, name = "Sum of loans") +
+    labs(title = 'Distribution of agriculture-related Kiva loans around the world')
+)
 ```
 
+Surprisingly, there does not seem to be an overall trend in the distribution of agriculture-related loans across the world. The five countries which top the list are Kenya, Phillipines, Cambodia, El Salvador, and Peru, spread across three continents with very different agricultural environments. However, as you can see in the map above, Kenya seems to have an oddly high amount of loans to its name. Let us verify this using a simple statistical tool, the $Z$-score:
+
+```{r}
+kenya_ag_sum <- as.double(drop_na(agriculture_by_country[agriculture_by_country$iso == "KEN", c("ag_loans_sum")]))
+mean_ag <- mean(agriculture_by_country$ag_loans_sum)
+sd_ag <- sd(agriculture_by_country$ag_loans_sum, na.rm = TRUE)
+kenya_z_score <- (kenya_ag_sum - mean_ag) / sd_ag
+cat("Kenya's Z-score:", kenya_z_score)
+```
+
+In other words, the amount of agriculture-related loans that Kenyans are taking on using Kiva is 4.83 times the global average (for those countries which participate in Kiva loans). 
+
 <br>
+
 
 ## IQ 4: What is the average loan amount per gender in each region?
 
