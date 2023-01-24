@@ -51,6 +51,9 @@ kiva_loans <- read_csv("data/kiva_loans.csv")
 # Two supplementary Kiva datasets surrounding loan themes and id's
 kiva_loan_ids <- read_csv("data/loan_theme_ids.csv")
 kiva_loan_regions <- read_csv("data/loan_themes_by_region.csv")
+
+# An external kaggle dataset with a list of countries and corresponding regions
+countries <- read_csv("data/countries.csv")
 ```
 
 This report will also conduct some geographical analysis on the distribution of Kiva loans. Before we can do this though, we must first setup our data. The Kiva loans datasets have been set up with two primary keys: `id` and `Loan theme ID`. The dataset has been normalised such that if we merge `kiva_loan_ids` with `kiva_loan_regions` we will be able to extract the ISO code related to each loan, which in combination with the `tmap` package will provide us with all the geographical data we want.
@@ -207,7 +210,6 @@ synthesized_data <- summary_aggregated %>%
 
 ## Merging data with regions
 
-countries <- read_csv("data/countries.csv")
 countries_clean <- countries %>%
   clean_names() %>%
   subset(select = c("country", "region"))
