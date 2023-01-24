@@ -23,9 +23,7 @@ nocite: '@*'
 <br>
 
 # Executive Summary
-The main aim of this research report was to investigate the where and who of Kiva fundees for this would provide insight to both Kiva itself and potential Kiva lenders.  We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated in countries with relatively low GDP per capita. 
-It was also found that the vast majority of Kiva fundees were Women, due to the high levels of inequality found in Kiva’s most common sectors and countries. 
-
+The main aim of this research report was to investigate the where and who of Kiva fundees for this would provide insight to both Kiva itself and potential Kiva lenders.  We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated in countries with relatively low GDP per capita. Furthermore, there was no general geographic trend found for the distribution of agriculture-related loans around the world. Finally, due to the high levels of inequality found in Kiva’s most common sectors and countries, our report shows that the vast majority of Kiva fundees are Women.
 
 <br>
 
@@ -41,7 +39,7 @@ As the data has been uploaded by Kiva themselves for the purpose of finding real
 
 Some wrangling of the data was required to generate the plots utilising the Kiva datasets. Most of the wrangling involved grouping and summarising to generate new dataframes which isolated variables for comparison. Also required for the geographical analysis undertaken in IQ 3 was to de-normalise the two supplementary datasets provided by Kiva — `kiva_loan_ids` and `kiva_loan_regions` — to find the 3-digit ISO code that went along with every loan. This process has been undertaken in the data setup section below.
 
-Potential stakeholders for this report are government organisations and charitable services such as Kiva. As they would want to be informed about where their money is being sent and how it is being used. Kiva itself is also a stakeholder of this report.
+Potential stakeholders for this report are government organisations and charitable services such as Kiva as they would want to be informed about where a majority of money is being requested and how it is being used.
 
 ## Data setup
 
@@ -197,7 +195,7 @@ ggplotly(
 )
 ```
 
-Surprisingly, there does not seem to be an overall trend in the distribution of agriculture-related loans across the world. The five countries which top the list are Kenya, Phillipines, Cambodia, El Salvador, and Peru, spread across three continents with very different agricultural environments. However, as you can see in the map above, Kenya seems to have an oddly high amount of loans to its name. Let us verify this using a simple statistical tool, the $Z$-score:
+Surprisingly, there does not seem to be an overall trend in the distribution of agriculture-related loans across the world. The five countries which top the list are Kenya, Phillipines, Cambodia, El Salvador, and Peru, countries which are spread across three very different continents with very different agricultural and geopolitical environments. Also, as you can see in the map above, Kenya seems to have an oddly high amount of loans to its name. Let us verify this using a simple statistical tool, the $Z$-score:
 
 ```{r}
 kenya_ag_sum <- as.double(drop_na(agriculture_by_country[agriculture_by_country$iso == "KEN", c("ag_loans_sum")]))
