@@ -23,7 +23,8 @@ nocite: '@*'
 <br>
 
 # Executive Summary
-The main aim of this research report was to investigate the where, what for and who to of Kiva fundees for this would provide insight to Kiva itself, governments and other charitable organisations.  We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated in countries with relatively low GDP per capita. Furthermore, there was no general geographic trend found for the distribution of agriculture-related loans around the world. Finally, due to the high levels of inequality found in Kiva’s most common sectors and countries, our report shows that the vast majority of Kiva fundees are Women.
+
+The main aim of this research report was to investigate the where, what for and who to of Kiva fundees, for this would provide insight to Kiva itself, governments and other charitable organisations. We found that most Kiva loans were directed into the Agriculture, Food and Retail sectors and most commonly originated from countries with a relatively low GDP per capita. Furthermore, there was no general geographic trend found for the distribution of agriculture-related loans around the world. Finally, due to the high levels of inequality found in Kiva’s most common sectors and countries, our report shows that the vast majority of Kiva fundees are Women.
 
 <br>
 
@@ -87,7 +88,7 @@ kiva_loans_PKs <- inner_join(kiva_loans_themeid, kiva_loan_regions_subset, by = 
 
 Note that in the code above we performed an inner join between all three datasets. Due to the presence of NA's and missing data, this process will inevitably cause some data loss. In our case, we lost approximately 30000 rows of data ($~4\%$ of the original dataset). We deem that the upsides to working with a complete dataset (with no missing loan theme id's or ISO's) is enough to justify this small loss in data.
 
-```{r, warning = FALSE, message = FALSE, echo = FALSE}
+```{r, warning = FALSE, message = FALSE, results = FALSE}
 # Checking for any null values in the two columns of importance
 if (is.null(kiva_loans_PKs$iso) || is.null(kiva_loans_PKs$loan_theme_id)) {
   print("Null values present in `iso` or `loan_theme_id` columns.")
