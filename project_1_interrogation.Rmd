@@ -1,7 +1,7 @@
 ---
 title: "MATH1115: Project 1"
 author: "Antriksh - 510415022 | Boris - 500463613 | Vishesh - 500545399 | Alex - 500459111"
-subtitle: "Interrogation of CC Group 1 "
+subtitle: "Interrogation of CC Group 1"
 date: "University of Sydney | MATH1115 | January 2023"
 output:
   html_document:
@@ -32,6 +32,8 @@ library(plotly)
 kiva_loans <- read_csv("data/kiva_loans.csv")
 ```
 
+We decided to review CC Group 2's Research Question 1 as we believe that the interactive bubble chart used to address the question is confusing and not relevant to the originally proposed question. The bubble chart was constructed with the aid of four variables consisting of Median Loan Amount, Average Repayment Terms, Sector and Number of Loans Per Sector. The group concluded that there was no correlation between the average repayment term and the median loan amount. Though this is a valid conclusion, the group has failed to address the initial question they proposed. Furthermore, the chart is difficult to interpret due to the large number of independent variables presented at once, thus making it almost impossible to conclude any relationships. For example, the use of depicting sectors with various colours poses no use due to the large number of sectors in the dataset. 
+
 ```{r, warning = FALSE, message = FALSE}
 kiva_loans %>%
   group_by(sector) %>%
@@ -42,8 +44,6 @@ kiva_loans %>%
   geom_text(aes(label = num_loans), vjust = -0.5, size = 2.5) +
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=0.4))
 ```
-<br>
-We decided to review CC Group 2's Research Question 1 as we believe that the interactive bubble chart used to address the question is confusing and not relevant to the originally proposed question. The bubble chart was constructed with the aid of four variables consisting of Median Loan Amount, Average Repayment Terms, Sector and Number of Loans Per Sector. The group concluded that there was no correlation between the average repayment term and the median loan amount. Though this is a valid conclusion, the group has failed to address the initial question they proposed. Furthermore, the chart is difficult to interpret due to the large number of independent variables presented at once, thus making it almost impossible to conclude any relationships. For example, the use of depicting sectors with various colours poses no use due to the large number of sectors in the dataset. 
 
 Instead, we have chosen to convert the bubble chart into a simple bar plot with sectors on the x-axis and number of loans on the y-axis. We believe that presenting the number of loans against the sector is the most accurate and simple way to present the distribution of Kiva loans. Providing the reader a gentle introduction to the differences amongst the sectors without including any unnecessary variables.
 
